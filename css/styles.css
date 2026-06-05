@@ -918,17 +918,23 @@
             /* избегаем zoom на iOS */
         }
 
-        /* Широкий репорт-модал — фиксированная высота, скролл внутри */
+        /* Широкий репорт-модал — ФИКСИРОВАННАЯ высота, не меняется при смене вкладок */
         .report-modal-wide {
             max-width: 100% !important;
             width: 100% !important;
             margin: 0 !important;
             border-radius: 20px 20px 0 0 !important;
             padding: 16px 16px 0 !important;
-            max-height: 85vh !important;
+            height: 78vh !important;
+            max-height: 78vh !important;
             display: flex !important;
             flex-direction: column !important;
             overflow: hidden !important;
+        }
+
+        /* Модал поверх компаса (compass z-index=10001) */
+        #reportModal {
+            z-index: 12000;
         }
 
         /* Заголовок и вкладки — не сжимаются */
