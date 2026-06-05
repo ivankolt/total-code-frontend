@@ -1,4 +1,4 @@
-﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://05e87439228aac.lhr.life';
+﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://ecc9c69a3d8893.lhr.life';
 
 let heatmapPoints = [];
 const MAX_POINTS = 10000;

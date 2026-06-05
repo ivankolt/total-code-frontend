@@ -5,7 +5,7 @@
 
 import { map } from './map.js';
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://05e87439228aac.lhr.life';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://ecc9c69a3d8893.lhr.life';
 
 // Смещения по умолчанию для 4 направлений (в градусах GPS, ~15-20 метров)
 const DIR_OFFSETS_DEFAULT = {
