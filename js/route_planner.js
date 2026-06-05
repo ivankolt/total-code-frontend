@@ -3,7 +3,7 @@
  * Маршрут: модальное диалоговое окно, клик на карту для точек, OSRM, анализ перекрёстков.
  */
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://e2a637d0012efe.lhr.life';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://5c572f0ed826b2.lhr.life';
 // Mapbox Directions API: работает из браузера без CORS, токен уже есть в map.js
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiaXZhbmtvbHRzIiwiYSI6ImNtZ25kdmRlcjFlZTQybHF3MnFkYmVsYnAifQ.lotzKzWSmKnbER_ql8T1ng';
 const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
