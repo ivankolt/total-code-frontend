@@ -797,12 +797,13 @@
             min-height: 38px !important;
         }
 
-        /* ----- Компас ----- */
+        /* ----- Компас — сверху по центру ----- */
         #custom-compass {
-            top: auto;
-            bottom: calc(290px + 16px);
-            /* над дашбордом */
-            right: 14px;
+            top: 60px;
+            bottom: auto;
+            right: auto;
+            left: 50%;
+            transform: translateX(-50%);
             width: 48px;
             height: 48px;
         }
@@ -831,6 +832,11 @@
         .cars-widget {
             grid-column: 1;
             grid-row: auto;
+        }
+
+        /* Показываем виджет машин на мобильном (переопределяем display:none планшета) */
+        .cars-widget {
+            display: flex;
         }
 
         /* Селектор камеры — крупный, удобный */

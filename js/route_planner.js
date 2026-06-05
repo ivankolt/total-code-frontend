@@ -1,4 +1,4 @@
-﻿/**
+/**
  * route_planner.js
  * Маршрут: модальное диалоговое окно, клик на карту для точек, OSRM, анализ перекрёстков.
  */
@@ -75,15 +75,21 @@ function _bindMapClick() {
             fromCoords = coords;
             document.getElementById('routeFromInput').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             _placeMarker('from', coords);
+            clickMode = null;
+            _updatePickHint();
+            mapRef.getCanvas().style.cursor = '';
+            // Автоматически переходим к выбору конечной точки
+            setTimeout(() => _startPickMode('to'), 200);
         } else {
             toCoords = coords;
             document.getElementById('routeToInput').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             _placeMarker('to', coords);
+            clickMode = null;
+            _updatePickHint();
+            mapRef.getCanvas().style.cursor = '';
+            // Автоматически открываем диалог — пользователь сразу видит кнопку «Построить»
+            document.getElementById('routeDialogOverlay').classList.add('active');
         }
-
-        clickMode = null;
-        _updatePickHint();
-        mapRef.getCanvas().style.cursor = '';
     });
 }
 
