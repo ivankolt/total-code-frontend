@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>Мониторинг трафика</title>
+    <meta name="description" content="Система мониторинга автомобильного трафика с анализом в реальном времени">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#10121a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Mapbox styles -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- YOUR CSS FILE -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Mapbox library -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    <!-- Chart.js for line graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <div id="status">Подключение к системе...</div>
+
+    <!-- Фиксированный кастомный компас поверх карты -->
+    <div id="custom-compass" title="Сбросить ориентацию">
+        <span class="compass-label n">С</span>
+        <span class="compass-label e">В</span>
+        <span class="compass-label s">Ю</span>
+        <span class="compass-label w">З</span>
+        <div id="compass-needle"></div>
+
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <div id="drag-handle">
+            <div class="drag-bar"></div>
+        </div>
+
+        <div id="dashboard-content">
+            <!-- Ряд 1: Селектор камеры + Кнопки + Статус + Прогноз + Скорость -->
+            <div class="widget-container camera-select-widget">
+                <select id="cameraSelector">
+                    <option value="all">🌍 Все перекрестки</option>
+                </select>
+            </div>
+
+            <div class="widget-container alert-widget">
+                <button class="alert-button btn-play" id="playAlertBtn">🔊 Оповещение</button>
+                <button class="alert-button btn-status" id="checkStatusBtn">📊 Статус</button>
+                <button class="alert-button btn-route" id="routeOpenBtn">🛣️ Маршрут</button>
+                <div class="traffic-status-display" id="trafficStatusDisplay">
+                    <div class="traffic-status-label">Статус дороги</div>
+                    <div class="traffic-status-value status-unknown">-</div>
+                </div>
+                <div class="direction-stats" id="directionStats"></div>
+            </div>
+
+            <!-- Ряд 1: График -->
+            <div class="widget-container chart-widget">
+                <canvas id="speedChart"></canvas>
+            </div>
+
+            <!-- Ряд 1: Прогноз нейросети -->
+            <div class="widget-container prediction-widget">
+                <div class="prediction-header">🔮 Прогноз ИИ</div>
+                <button id="getAiPredictionBtn" class="alert-button btn-play">Рассчитать</button>
+                <div id="predictionTimeLabel" class="prediction-time-label"></div>
+                <div id="aiResult" style="display: none;">
+                    <div class="ai-row">
+                        <span>Машин:</span>
+                        <strong id="aiCars">0</strong>
+                    </div>
+                    <div class="ai-row">
+                        <span>Скор.:</span>
+                        <strong id="aiSpeed">0 км/ч</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Колонка 5: Средняя скорость -->
+            <div class="widget-container speed-widget">
+                <div class="speed-display" id="avgSpeed">0</div>
+                <div class="speed-label">км/ч<br>средняя скорость</div>
+            </div>
+
+            <!-- Колонка 6: Количество машин -->
+            <div class="widget-container cars-widget">
+                <div class="cars-display" id="liveCarsCount">0</div>
+                <div class="cars-label">а/т<br>на перекрёстке</div>
+            </div>
+
+            <footer id="about" class="page-footer">
+                <div>
+                    <strong>Система мониторинга трафика</strong> — веб‑интерфейс для анализа автомобильного движения с
+                    использованием компьютерного зрения и интерактивных карт.<br>
+                    Разработчик: Кольцов Иван, 2025
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ══════════════ МОДАЛЬНОЕ ОКНО МАРШРУТА ══════════════ -->
+    <div id="routeDialogOverlay">
+        <div id="routeDialog" role="dialog" aria-modal="true" aria-label="Построение маршрута">
+
+            <div class="rd-header">
+                <span>🛣️ Построение маршрута</span>
+                <button id="routeDialogClose" aria-label="Закрыть">&times;</button>
+            </div>
+
+            <div class="rd-body">
+                <!-- ОТКУДА -->
+                <div class="rp-row">
+                    <div class="rp-label">Откуда</div>
+                    <div class="rp-input-row">
+                        <input id="routeFromInput" type="text" placeholder="Адрес или координаты..." autocomplete="off">
+                        <button id="routeFromSearch" title="Найти адрес">🔍</button>
+                        <button id="routeFromGPS" title="Моё местоположение">📍 GPS</button>
+                        <button id="routePickFrom" title="Выбрать на карте">🗺️</button>
+                    </div>
+                </div>
+
+                <!-- КУДА -->
+                <div class="rp-row">
+                    <div class="rp-label">Куда</div>
+                    <div class="rp-input-row">
+                        <input id="routeToInput" type="text" placeholder="Адрес назначения..." autocomplete="off">
+                        <button id="routeToSearch" title="Найти адрес">🔍</button>
+                        <button id="routePickTo" title="Выбрать на карте">🗺️</button>
+                    </div>
+                </div>
+
+                <!-- Кнопки -->
+                <div class="rp-actions">
+                    <button id="routeBuildBtn">🛣️ Построить</button>
+                    <button id="routeClearBtn">✕ Сброс</button>
+                </div>
+
+                <!-- Статус -->
+                <div id="routeStatus" class="route-status"></div>
+
+                <!-- Перекрёстки -->
+                <div id="routeIntersections"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подсказка при выборе точки на карте -->
+    <div id="routePickHint" style="display:none;"></div>
+
+    <!-- вкладки админки -->
+    <div id="auth-bar">
+        <button id="reportBtn" class="alert-button btn-status"
+            style="width: auto; display: none; background: linear-gradient(135deg,#e65100,#bf360c); padding: 8px 14px; min-height: 40px;">📄
+            Отчёты</button>
+        <button id="loginBtn" class="alert-button btn-status"
+            style="width: auto; padding: 8px 16px; min-height: 40px;">Войти</button>
+        <button id="logoutBtn" class="alert-button btn-status"
+            style="width: auto; display: none; background: linear-gradient(135deg,#c62828,#b71c1c); padding: 8px 14px; min-height: 40px;">Выйти</button>
+    </div>
+
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Закрыть">&times;</button>
+            <h2>Вход администратора</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Имя пользователя</label>
+                    <input type="text" id="username" name="username" required placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required placeholder="*****">
+                </div>
+                <div id="loginError" class="error-msg" style="display:none; color: #ff5252; margin-bottom: 10px;">
+                    Неверный логин или пароль
+                </div>
+                <button type="submit" class="alert-button btn-play">Войти в систему</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal">
+        <div class="modal-content report-modal-wide">
+            <button class="close-report" aria-label="Закрыть">&times;</button>
+            <h2 class="report-modal-title">🛡️ Панель администратора</h2>
+
+            <!-- Вкладки -->
+            <div class="report-tabs">
+                <button class="report-tab active" data-tab="monitor">📊 Мониторинг</button>
+                <button class="report-tab" data-tab="traffic">🚗 Трафик</button>
+                <button class="report-tab" data-tab="logs">📋 Журнал</button>
+                <button class="report-tab" data-tab="system">💾 Система</button>
+                <button class="report-tab" data-tab="cameras">📷 Камеры</button>
+                <button class="report-tab" data-tab="chart">📈 График</button>
+            </div>
+
+            <!-- Вкладка: Мониторинг системы -->
+            <div class="report-tab-content active" id="tab-monitor">
+                <div class="metrics-grid">
+                    <div class="metric-card" id="metric-cpu">
+                        <div class="metric-icon">🖥️</div>
+                        <div class="metric-label">CPU</div>
+                        <div class="metric-value" id="cpu-val">—</div>
+                        <div class="metric-unit">%</div>
+                        <div class="metric-bar-wrap">
+                            <div class="metric-bar" id="cpu-bar"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card" id="metric-ram">
+                        <div class="metric-icon">💾</div>
+                        <div class="metric-label">RAM</div>
+                        <div class="metric-value" id="ram-val">—</div>
+                        <div class="metric-unit">%</div>
+                        <div class="metric-bar-wrap">
+                            <div class="metric-bar" id="ram-bar"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card" id="metric-disk">
+                        <div class="metric-icon">🗄️</div>
+                        <div class="metric-label">Диск</div>
+                        <div class="metric-value" id="disk-val">—</div>
+                        <div class="metric-unit">%</div>
+                        <div class="metric-bar-wrap">
+                            <div class="metric-bar" id="disk-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cpu-chart-wrap">
+                    <div class="cpu-chart-title">История загрузки CPU (15 мин)</div>
+                    <canvas id="cpuMiniChart" height="90"></canvas>
+                </div>
+                <div class="services-status" id="services-status">
+                    <div class="service-row"><span>🔌 PostgreSQL</span><span class="svc-badge"
+                            id="svc-postgres">—</span></div>
+                    <div class="service-row"><span>📈 InfluxDB</span><span class="svc-badge" id="svc-influx">—</span>
+                    </div>
+                    <div class="service-row"><span>🤖 ML-модели</span><span class="svc-badge" id="svc-ml">—</span></div>
+                </div>
+                <div class="metric-update-hint" id="metric-updated">Обновление...</div>
+                <button id="downloadSystemBtn" class="report-dl-btn">📥 Скачать отчёт по системе (Excel)</button>
+            </div>
+
+            <!-- Вкладка: Отчёт трафика -->
+            <div class="report-tab-content" id="tab-traffic">
+                <p class="report-hint">Выгрузка почасовой статистики по camera_id с разбивкой по направлениям (С/Ю/З/В).
+                </p>
+                <div class="form-group">
+                    <label>С:</label>
+                    <input type="datetime-local" id="dateFrom" class="report-input">
+                </div>
+                <div class="form-group">
+                    <label>По:</label>
+                    <input type="datetime-local" id="dateTo" class="report-input">
+                </div>
+                <button id="downloadStatsBtn" class="report-dl-btn">📊 Скачать статистику (Excel)</button>
+            </div>
+
+            <!-- Вкладка: Системный журнал -->
+            <div class="report-tab-content" id="tab-logs">
+                <p class="report-hint">Журнал системных событий (INFO/WARNING/ERROR) за выбранный период в формате PDF.
+                </p>
+                <div class="form-group">
+                    <label>С:</label>
+                    <input type="datetime-local" id="dateFromLogs" class="report-input">
+                </div>
+                <div class="form-group">
+                    <label>По:</label>
+                    <input type="datetime-local" id="dateToLogs" class="report-input">
+                </div>
+                <button id="downloadLogsBtn" class="report-dl-btn">🛠️ Скачать журнал (PDF)</button>
+            </div>
+
+            <!-- Вкладка: Системные метрики -->
+            <div class="report-tab-content" id="tab-system">
+                <div class="cameras-status-list" id="cameras-status-list">
+                    <div class="cameras-loading">Загрузка камер...</div>
+                </div>
+                <p class="report-hint" style="margin-top:14px;">Статус каждой камеры в реальном времени. Обновляется при
+                    открытии вкладки.</p>
+            </div>
+
+            <!-- Вкладка: Просмотр потоков камер (только admin) -->
+            <div class="report-tab-content" id="tab-cameras">
+                <div class="stream-layout">
+                    <!-- Левая панель — список камер -->
+                    <div class="stream-sidebar">
+                        <div class="stream-sidebar-title">📷 Перекрёстки</div>
+                        <div id="stream-cam-list" class="stream-cam-list">
+                            <div class="stream-loading">Нажмите на вкладку...</div>
+                        </div>
+                    </div>
+
+                    <!-- Правая панель — плеер -->
+                    <div class="stream-main">
+                        <div class="stream-header">
+                            <span id="stream-cam-label" class="stream-cam-label"></span>
+                            <div class="stream-header-actions">.
+                                <button class="stream-expand-btn" onclick="openStreamFullscreen()" title="На весь экран">⛶</button>
+                            </div>
+                        </div>
+                        <div id="stream-viewer" class="stream-viewer">
+                            <div id="stream-placeholder" class="stream-placeholder">
+                                <div>📹</div>
+                                <div>Выберите перекрёсток</div>
+                                <div id="stream-error-msg" class="stream-err"></div>
+                            </div>
+                        </div>
+                        <div class="stream-legend">
+                            <span class="sl-item sl-green">█ ≥20 км/ч</span>
+                            <span class="sl-item sl-yellow">█ 5–19 км/ч</span>
+                            <span class="sl-item sl-red">█ 0–4 км/ч</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка: График количества машин -->
+            <div class="report-tab-content" id="tab-chart">
+                <p class="report-hint">Гистограмма количества транспортных средств за выбранный период (интервал: 30 мин).</p>
+                <div class="chart-filter-row">
+                    <div class="form-group">
+                        <label>С:</label>
+                        <input type="datetime-local" id="chartDateFrom" class="report-input">
+                    </div>
+                    <div class="form-group">
+                        <label>По:</label>
+                        <input type="datetime-local" id="chartDateTo" class="report-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Перекрёсток:</label>
+                        <select id="chartCameraSelect" class="report-input">
+                            <option value="all">🌍 Все перекрёстки</option>
+                        </select>
+                    </div>
+                    <button id="buildChartBtn" class="report-dl-btn">📈 Построить</button>
+                </div>
+                <div class="traffic-chart-wrap">
+                    <div id="chartStatus" class="chart-status-msg"></div>
+                    <canvas id="trafficBarChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Fullscreen-оверлей для стрима камеры -->
+    <div id="stream-fullscreen-overlay" class="stream-fs-overlay" onclick="closeStreamFullscreen()">
+        <div class="stream-fs-box" onclick="event.stopPropagation()">
+            <div class="stream-fs-header">
+                <span id="stream-fs-label" class="stream-fs-label"></span>
+                <div class="stream-fs-actions">
+                    <button class="stream-fs-close-btn" onclick="closeStreamFullscreen()">✕</button>
+                </div>
+            </div>
+            <div id="stream-fs-viewer" class="stream-fs-viewer">
+                <div id="stream-fs-placeholder" class="stream-placeholder">
+                    <div>📹</div>
+                    <div>Выберите перекрёсток</div>
+                </div>
+            </div>
+            <div class="stream-legend" style="background:rgba(0,0,0,0.6);">
+                <span class="sl-item sl-green">█ ≥20 км/ч</span>
+                <span class="sl-item sl-yellow">█ 5–19 км/ч</span>
+                <span class="sl-item sl-red">█ 0–4 км/ч</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/route_planner.js"></script>
+    <script type="module" src="js/admin_reports.js"></script>
+
+    <script type="module">
+        import { initCameraSelector } from './js/camera_manager.js';
+        import { initPrediction }     from './js/prediction.js';
+        import { initRoutePlanner }   from './js/route_planner.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCameraSelector();
+            initPrediction();
+        });
+
+        // route_planner нужна ссылка на карту — ждём её инициализации
+        window.addEventListener('mapReady', e => {
+            initRoutePlanner(e.detail.map);
+        });
+    </script>
+
+    <!-- Your JS modules -->
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/speedchart.js"></script>
+    <script type="module" src="js/dashboard_resize.js"></script>
+    <script type="module" src="js/avgspeed.js"></script>
+    <script type="module" src="js/map.js"></script>
+    <script type="module" src="js/heatmap.js"></script>
+    <script type="module" src="js/traffic_lights.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/voicealert.js"></script>
+
+
+</body>
+
+</html>

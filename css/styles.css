@@ -1,0 +1,2669 @@
+    /* ======================
+       ГЛОБАЛЬНЫЕ СТИЛИ
+       ====================== */
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        background-color: #111418;
+        color: white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 1;
+    }
+
+    #status {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: linear-gradient(135deg, rgba(20, 20, 30, 0.88), rgba(30, 30, 45, 0.88));
+        color: #c8d0e0;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-family: 'Inter', monospace;
+        font-size: 0.75rem;
+        font-weight: 500;
+        z-index: 1000;
+        border: 1px solid rgba(120, 140, 200, 0.18);
+        backdrop-filter: blur(10px);
+        letter-spacing: 0.2px;
+    }
+
+    /* ======================
+       БАЗОВЫЕ СТИЛИ ВИДЖЕТОВ
+       ====================== */
+    .widget-container {
+        background: rgba(22, 24, 32, 0.97);
+        border-radius: 14px;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        transition: border-color 0.2s ease;
+    }
+
+    .widget-container:hover {
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .alert-widget {
+        flex-direction: column;
+        gap: 8px;
+        justify-content: flex-start;
+    }
+
+    /* ======================
+       AUTH BUTTONS (top-right)
+       ====================== */
+    #auth-bar {
+        position: absolute;
+        top: 12px;
+        right: 14px;
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* ======================
+       DASHBOARD (Панель внизу)
+       ====================== */
+    #dashboard {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 400px;
+        background: rgba(16, 18, 26, 0.98);
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        box-shadow: 0 -6px 32px rgba(0, 0, 0, 0.75), 0 -1px 0 rgba(255, 255, 255, 0.06);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    /* ---- DRAG HANDLE — большой hit-area для пальца ---- */
+    #drag-handle {
+        width: 100%;
+        height: 36px;
+        /* увеличен для удобного захвата */
+        min-height: 36px;
+        cursor: ns-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        touch-action: none;
+        user-select: none;
+        position: relative;
+    }
+
+    /* Невидимая расширенная зона касания */
+    #drag-handle::after {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 0;
+        right: 0;
+        bottom: -4px;
+    }
+
+    .drag-bar {
+        width: 44px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 3px;
+        transition: background 0.2s, width 0.2s;
+    }
+
+    #drag-handle:hover .drag-bar,
+    #drag-handle:active .drag-bar {
+        background: rgba(79, 195, 247, 0.5);
+        width: 60px;
+    }
+
+    /* ======================
+       СЕТКА ДАШБОРДА (GRID)
+       ====================== */
+    #dashboard-content {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 14px 12px 14px;
+
+        width: 100%;
+        max-width: 1500px;
+        margin: 0 auto;
+
+        display: grid;
+        grid-template-columns: 200px 200px minmax(0, 1fr) 160px 110px 110px;
+        grid-template-rows: 1fr auto;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    /* --- Позиционирование виджетов в гриде --- */
+    .camera-select-widget {
+        grid-column: 1;
+        grid-row: 1;
+        padding: 8px;
+        align-items: stretch;
+    }
+
+    .alert-widget {
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+    }
+
+    .chart-widget {
+        grid-column: 3;
+        grid-row: 1;
+        min-width: 0;
+        position: relative;
+        padding: 8px;
+    }
+
+    .prediction-widget {
+        grid-column: 4;
+        grid-row: 1;
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px;
+        border: 1px dashed rgba(76, 175, 80, 0.35);
+    }
+
+    .speed-widget {
+        grid-column: 5;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(18, 22, 30, 0.97);
+        border-radius: 14px;
+        padding: 10px;
+        border: 1px solid rgba(0, 255, 136, 0.12);
+    }
+
+    .cars-widget {
+        grid-column: 6;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(18, 22, 30, 0.97);
+        border-radius: 14px;
+        padding: 10px;
+        border: 1px solid rgba(79, 195, 247, 0.15);
+    }
+
+    #about {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        margin-top: 2px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        text-align: center;
+        color: #4a4f5e;
+        width: 100%;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    /* Настройки графика */
+    canvas#speedChart {
+        width: 100% !important;
+        max-height: 200px !important;
+        background-color: rgba(12, 14, 20, 0.8);
+        border-radius: 8px;
+    }
+
+    /* Скроллбар */
+    #dashboard-content::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    #dashboard-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 2px;
+    }
+
+    /* ======================
+       CAMERA SELECTOR
+       ====================== */
+    #cameraSelector {
+        width: 100%;
+        padding: 10px 12px;
+        background: rgba(35, 38, 52, 0.95);
+        color: #d0d8f0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.2s, background 0.2s;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    #cameraSelector:focus {
+        border-color: #4CAF50;
+        background: rgba(45, 50, 70, 0.98);
+    }
+
+    /* ======================
+       ВИДЖЕТ СКОРОСТИ
+       ====================== */
+    .speed-display {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #00ff88;
+        line-height: 1;
+        margin-bottom: 4px;
+        text-shadow: 0 0 20px rgba(0, 255, 136, 0.35);
+        letter-spacing: -1px;
+    }
+
+    .speed-label {
+        font-size: 0.72rem;
+        color: #556;
+        text-align: center;
+        line-height: 1.3;
+        font-weight: 500;
+    }
+
+
+
+    /* ======================
+       ВИДЖЕТ МАШИН
+       ====================== */
+    .cars-display {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #4fc3f7;
+        line-height: 1;
+        margin-bottom: 4px;
+        text-shadow: 0 0 20px rgba(79, 195, 247, 0.35);
+        letter-spacing: -1px;
+    }
+
+    .cars-label {
+        font-size: 0.72rem;
+        color: #556;
+        text-align: center;
+        line-height: 1.3;
+        font-weight: 500;
+    }
+
+    /* ======================
+       КНОПКИ
+       ====================== */
+    .alert-button {
+        width: 70%;
+        padding: 10px 8px;
+        font-size: 0.78rem;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 600;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        transition: all 0.18s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        position: relative;
+        overflow: hidden;
+        /* Минимальная высота для удобного нажатия пальцем */
+        min-height: 44px;
+    }
+
+    .alert-button::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0);
+        transition: background 0.15s;
+        border-radius: inherit;
+    }
+
+    .alert-button:active::after {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .alert-button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .alert-button:active {
+        transform: scale(0.97);
+        box-shadow: none;
+    }
+
+    .alert-button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: scale(1);
+        box-shadow: none;
+    }
+
+    .btn-play {
+        background: linear-gradient(135deg, #43a047, #2e7d32);
+        color: white;
+        box-shadow: 0 2px 8px rgba(67, 160, 71, 0.25);
+    }
+
+    .btn-play:hover {
+        background: linear-gradient(135deg, #4caf50, #388e3c);
+    }
+
+    /* Кнопка входа в систему — меньше чем общий alert-button */
+    #loginForm .btn-play {
+        width: 60%;
+        padding: 10px 20px;
+        font-size: 0.82rem;
+        min-height: 40px;
+        margin-top: 6px;
+    }
+
+    .btn-status {
+        background: linear-gradient(135deg, #1976d2, #1565c0);
+        color: white;
+        box-shadow: 0 2px 8px rgba(25, 118, 210, 0.25);
+    }
+
+    .btn-status:hover {
+        background: linear-gradient(135deg, #2196f3, #1976d2);
+    }
+
+    /* ======================
+       СТАТУС ТРАФИКА
+       ====================== */
+    .traffic-status-display {
+        width: 100%;
+        padding: 8px 10px;
+        background: rgba(12, 14, 20, 0.85);
+        border-radius: 9px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        min-height: 38px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .traffic-status-label {
+        font-size: 0.58rem;
+        color: #555;
+        margin-bottom: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        font-weight: 600;
+    }
+
+    .traffic-status-value {
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .status-low {
+        color: #4CAF50;
+    }
+
+    .status-medium {
+        color: #FFC107;
+    }
+
+    .status-high {
+        color: #FF5252;
+    }
+
+    .status-fog {
+        color: #AB47BC;
+    }
+
+    .status-unknown {
+        color: #444;
+    }
+
+    /* Направления */
+    .direction-stats {
+        font-size: 0.7rem;
+        color: #8a9ab5;
+        line-height: 1.6;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2px 8px;
+    }
+
+    .direction-stats div {
+        display: flex;
+        justify-content: space-between;
+        gap: 4px;
+    }
+
+    /* ======================
+       PREDICTION WIDGET
+       ====================== */
+    .prediction-header {
+        font-size: 0.78rem;
+        color: #4caf50;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+
+    .prediction-widget .alert-button {
+        font-size: 0.7rem;
+        padding: 8px 4px;
+        min-height: 40px;
+    }
+
+    .ai-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        padding: 2px 0;
+    }
+
+    .ai-row span {
+        color: #7a8ca8;
+    }
+
+    #aiCars {
+        color: #4caf50;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    #aiSpeed {
+        color: #4fc3f7;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    #aiResult {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding-top: 6px;
+        margin-top: 2px;
+    }
+
+    /* ======================
+       LOADING SPINNER
+       ====================== */
+    .loading-spinner {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        border-top: 2px solid #4fc3f7;
+        border-radius: 50%;
+        animation: spin 0.75s linear infinite;
+        margin-right: 5px;
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ======================
+       МОДАЛЬНЫЕ ОКНА
+       ====================== */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.82);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .modal-content {
+        background: linear-gradient(160deg, #1c2030, #161a24);
+        margin: 15% auto;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        width: 95%;
+        max-width: 600px;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+        text-align: center;
+        color: white;
+        position: relative;
+        /* нужно для absolute-позиции кнопки закрытия */
+    }
+
+    /* Заголовок модального окна — строго по центру */
+    .modal-content h2 {
+        text-align: center;
+        margin: 0 0 20px 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #fff;
+        width: 100%;
+    }
+
+    .close-modal,
+    .close-report {
+        color: #556;
+        /* Вместо float:right используем absolute — иначе h2 смещается */
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        font-size: 22px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1;
+        transition: color 0.15s;
+        padding: 4px 6px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 6px;
+    }
+
+    .close-modal:hover,
+    .close-report:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+        text-align: center;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #8a9ab5;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 14px;
+        background: rgba(35, 40, 58, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: white;
+        box-sizing: border-box;
+        font-size: 1rem;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        transition: border-color 0.2s, background 0.2s;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #4CAF50;
+        background: rgba(45, 55, 75, 0.95);
+    }
+
+    /* ======================
+       КОМПАС
+       ====================== */
+    #custom-compass {
+        position: fixed;
+        top: 60px;
+        right: 14px;
+        z-index: 10001;
+        width: 52px;
+        height: 52px;
+        background: rgba(20, 22, 32, 0.92);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+        transition: border-color 0.2s, transform 0.15s;
+    }
+
+    #custom-compass:active {
+        transform: scale(0.92);
+    }
+
+    .compass-label {
+        position: absolute;
+        font-size: 9px;
+        font-weight: 700;
+        color: #8090b0;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .compass-label.n {
+        top: 3px;
+        color: #ef5350;
+    }
+
+    .compass-label.e {
+        right: 5px;
+    }
+
+    .compass-label.s {
+        bottom: 3px;
+    }
+
+    .compass-label.w {
+        left: 5px;
+    }
+
+    #compass-needle {
+        width: 4px;
+        height: 28px;
+        position: relative;
+        transform-origin: center center;
+        transition: transform 0.15s ease-out;
+        z-index: 5;
+    }
+
+    #compass-needle::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: linear-gradient(180deg, #ef5350, #b71c1c);
+        border-radius: 2px 2px 0 0;
+    }
+
+    #compass-needle::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 0 0 2px 2px;
+    }
+
+    /* ======================
+       АДАПТАЦИЯ — ПЛАНШЕТ (≤ 1100px)
+       ====================== */
+    @media (max-width: 1100px) {
+        #dashboard-content {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+            gap: 8px;
+        }
+
+        .camera-select-widget {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .alert-widget {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .chart-widget {
+            grid-column: 1 / span 2;
+            grid-row: 2;
+        }
+
+        .prediction-widget {
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        .speed-widget {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .cars-widget {
+            grid-column: 2;
+            grid-row: 3;
+            display: none;
+        }
+
+        /* скрываем на планшете - нет места */
+        #about {
+            grid-column: 1 / -1;
+            grid-row: 4;
+        }
+    }
+
+    /* ======================
+       АДАПТАЦИЯ — МОБИЛЬНЫЙ (≤ 640px)
+       ====================== */
+    @media (max-width: 640px) {
+
+        /* ----- Статус (top-left) ----- */
+        #status {
+            top: 10px;
+            left: 10px;
+            font-size: 0.68rem;
+            padding: 5px 9px;
+            max-width: calc(100% - 130px);
+            /* не перекрывать кнопки */
+        }
+
+        /* ----- Auth кнопки ----- */
+        #auth-bar {
+            top: 10px;
+            right: 10px;
+            gap: 6px;
+        }
+
+        #auth-bar .alert-button {
+            padding: 7px 12px !important;
+            font-size: 0.72rem !important;
+            min-height: 38px !important;
+        }
+
+        /* ----- Компас ----- */
+        #custom-compass {
+            top: auto;
+            bottom: calc(290px + 16px);
+            /* над дашбордом */
+            right: 14px;
+            width: 48px;
+            height: 48px;
+        }
+
+        /* ----- Dashboard ----- */
+        #dashboard {
+            height: 400px;
+        }
+
+        #drag-handle {
+            height: 40px;
+        }
+
+        #dashboard-content {
+            grid-template-columns: 1fr;
+            gap: 8px;
+            padding: 0 12px 14px;
+        }
+
+        /* Одна колонка — все виджеты стопкой */
+        .camera-select-widget,
+        .alert-widget,
+        .chart-widget,
+        .prediction-widget,
+        .speed-widget,
+        .cars-widget {
+            grid-column: 1;
+            grid-row: auto;
+        }
+
+        /* Селектор камеры — крупный, удобный */
+        #cameraSelector {
+            padding: 13px 14px;
+            font-size: 15px;
+            border-radius: 12px;
+        }
+
+        /* Alert widget — кнопки рядом */
+        .alert-widget {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .alert-widget .alert-button {
+            flex: 1 1 calc(50% - 4px);
+            min-width: 0;
+            font-size: 0.75rem;
+            min-height: 48px;
+        }
+
+        .alert-widget .traffic-status-display,
+        .alert-widget .direction-stats {
+            flex: 1 1 100%;
+        }
+
+        /* Speed widget горизонтально */
+        .speed-widget {
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+        }
+
+        .speed-display {
+            font-size: 2.4rem;
+            margin-bottom: 0;
+        }
+
+        /* Кнопки — большая зона касания */
+        .alert-button {
+            min-height: 48px;
+            font-size: 0.8rem;
+            border-radius: 12px;
+            padding: 12px 10px;
+        }
+
+        /* График */
+        canvas#speedChart {
+            max-height: 130px !important;
+        }
+
+        /* Карта уменьшается */
+        #map {
+            height: 48vh;
+        }
+
+        /* Модалки — снизу экрана (bottom sheet) */
+        .modal-content {
+            margin: auto;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-radius: 20px 20px 0 0;
+            max-width: 100%;
+            width: 100%;
+            padding: 24px 20px 34px;
+            /* + safe area снизу */
+        }
+
+        .form-group input {
+            padding: 14px;
+            font-size: 16px;
+            /* избегаем zoom на iOS */
+        }
+
+        /* Широкий репорт-модал */
+        .report-modal-wide {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 20px 16px 34px !important;
+        }
+
+        /* Вкладки — крупнее */
+        .report-tab {
+            padding: 10px 10px;
+            font-size: 0.75rem;
+        }
+
+        /* Метрики: 2 колонки */
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Кнопка скачать */
+        .report-dl-btn {
+            min-height: 48px;
+            font-size: 0.88rem;
+            border-radius: 12px;
+        }
+
+        /* Поле дат */
+        .report-input {
+            padding: 12px 12px;
+            font-size: 15px;
+        }
+
+        /* Скрыть футер на маленьких экранах */
+        #about {
+            display: none;
+        }
+    }
+
+    /* ======================
+       АДАПТАЦИЯ — ОЧЕНЬ МАЛЕНЬКИЙ (≤ 390px, One-hand friendly)
+       ====================== */
+    @media (max-width: 390px) {
+        #dashboard {
+            height: 340px;
+        }
+
+        .alert-button {
+            min-height: 52px;
+        }
+
+        .alert-widget .alert-button {
+            flex: 1 1 100%;
+            /* кнопки в столбик на самых маленьких */
+        }
+
+        .speed-display {
+            font-size: 2rem;
+        }
+
+        .report-tab {
+            padding: 10px 7px;
+            font-size: 0.7rem;
+        }
+
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* ======================
+       ВИРТУАЛЬНЫЕ СВЕТОФОРЫ (КАРТА)
+       ====================== */
+    .tl-marker {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        pointer-events: auto;
+        cursor: default;
+    }
+
+    .tl-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.5s ease, box-shadow 0.5s ease;
+        position: relative;
+    }
+
+    .tl-dir {
+        font-size: 9px;
+        font-weight: 800;
+        color: rgba(0, 0, 0, 0.75);
+        line-height: 1;
+        user-select: none;
+    }
+
+    .tl-label {
+        margin-top: 3px;
+        font-size: 9px;
+        font-weight: 700;
+        color: #fff;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+        white-space: nowrap;
+        min-height: 12px;
+    }
+
+    /* Пульсация зелёного */
+    .tl-phase-green {
+        animation: tl-pulse-green 2s ease-in-out infinite;
+    }
+
+    @keyframes tl-pulse-green {
+
+        0%,
+        100% {
+            box-shadow: 0 0 8px #00e676, 0 0 16px rgba(0, 230, 118, 0.3);
+        }
+
+        50% {
+            box-shadow: 0 0 18px #00e676, 0 0 34px rgba(0, 230, 118, 0.5);
+        }
+    }
+
+    /* Пульсация красного */
+    .tl-phase-red {
+        animation: tl-pulse-red 1.5s ease-in-out infinite;
+    }
+
+    @keyframes tl-pulse-red {
+
+        0%,
+        100% {
+            box-shadow: 0 0 8px #ff1744, 0 0 16px rgba(255, 23, 68, 0.3);
+        }
+
+        50% {
+            box-shadow: 0 0 18px #ff1744, 0 0 34px rgba(255, 23, 68, 0.5);
+        }
+    }
+
+    /* Мигание жёлтого */
+    .tl-phase-yellow {
+        animation: tl-blink-yellow 1s ease-in-out infinite;
+    }
+
+    @keyframes tl-blink-yellow {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.45;
+        }
+    }
+
+    /* Неизвестный */
+    .tl-phase-unknown {
+        opacity: 0.35;
+    }
+
+    /* ======================
+       ПАНЕЛЬ АДМИНИСТРАТОРА
+       ====================== */
+
+    /* Широкое модальное окно */
+    .report-modal-wide {
+        max-width: 720px !important;
+        width: 95% !important;
+        margin: 5% auto !important;
+        padding: 24px !important;
+        text-align: left !important;
+    }
+
+    .report-modal-title {
+        margin: 0 0 16px 0;
+        font-size: 1.05rem;
+        color: #e8edf8;
+        letter-spacing: 0.3px;
+        font-weight: 700;
+    }
+
+    /* Вкладки */
+    .report-tabs {
+        display: flex;
+        gap: 2px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        padding-bottom: 0;
+        flex-wrap: wrap;
+    }
+
+    .report-tab {
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: #556070;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        cursor: pointer;
+        font-weight: 600;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        transition: all 0.18s ease;
+        border-radius: 8px 8px 0 0;
+        letter-spacing: 0.3px;
+        /* Большая зона касания */
+        min-height: 44px;
+    }
+
+    .report-tab:hover {
+        color: #a0b0c8;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .report-tab.active {
+        color: #4fc3f7;
+        border-bottom: 2px solid #4fc3f7;
+        background: rgba(79, 195, 247, 0.07);
+    }
+
+    /* Контент вкладок */
+    .report-tab-content {
+        display: none;
+    }
+
+    .report-tab-content.active {
+        display: block;
+    }
+
+    /* Сетка метрик */
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .metric-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 16px 12px 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        transition: border-color 0.4s ease, background 0.3s ease;
+    }
+
+    .metric-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .metric-icon {
+        font-size: 1.4rem;
+        line-height: 1;
+        margin-bottom: 2px;
+    }
+
+    .metric-label {
+        font-size: 0.68rem;
+        color: #667;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        font-weight: 600;
+    }
+
+    .metric-value {
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: #eef2ff;
+        line-height: 1.1;
+    }
+
+    .metric-unit {
+        font-size: 0.68rem;
+        color: #445;
+        margin-top: -2px;
+        font-weight: 600;
+    }
+
+    .metric-bar-wrap {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 2px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .metric-bar {
+        height: 100%;
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.7s cubic-bezier(.4, 0, .2, 1), background 0.4s ease;
+        background: #00e676;
+    }
+
+    /* Мини-график CPU */
+    .cpu-chart-wrap {
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .cpu-chart-title {
+        font-size: 0.7rem;
+        color: #667;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    /* Статус сервисов */
+    .services-status {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .service-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.82rem;
+        color: #8090a8;
+        /* Удобный размер для чтения */
+        min-height: 32px;
+    }
+
+    .svc-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.3px;
+    }
+
+    .svc-ok {
+        background: rgba(0, 230, 118, 0.12);
+        color: #00e676;
+    }
+
+    .svc-err {
+        background: rgba(255, 23, 68, 0.12);
+        color: #ff1744;
+    }
+
+    /* Время обновления */
+    .metric-update-hint {
+        font-size: 0.68rem;
+        color: #445;
+        text-align: right;
+        margin-bottom: 10px;
+    }
+
+    /* Кнопка скачивания */
+    .report-dl-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        letter-spacing: 0.3px;
+        transition: all 0.2s ease;
+        margin-top: 4px;
+        min-height: 48px;
+    }
+
+    .report-dl-btn:hover {
+        background: linear-gradient(135deg, #1976d2, #1565c0);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(25, 118, 210, 0.3);
+    }
+
+    .report-dl-btn:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+
+    .report-dl-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Подсказка */
+    .report-hint {
+        font-size: 0.82rem;
+        color: #667;
+        margin: 0 0 14px 0;
+        line-height: 1.55;
+    }
+
+    /* Поле ввода дат */
+    .report-input {
+        width: 100%;
+        padding: 10px 12px;
+        background: rgba(30, 35, 50, 0.95);
+        color: #d0d8f0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .report-input:focus {
+        outline: none;
+        border-color: #4fc3f7;
+        background: rgba(40, 50, 70, 0.98);
+    }
+
+    /* Список камер */
+    .cameras-status-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .cameras-loading {
+        color: #445;
+        font-size: 0.85rem;
+        text-align: center;
+        padding: 24px 0;
+    }
+
+    .camera-status-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 10px;
+        padding: 12px 14px;
+        transition: border-color 0.2s;
+    }
+
+    .camera-status-card:hover {
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .cam-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    .cam-id {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #d0d8f0;
+    }
+
+    .cam-status-text {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    .cam-ok {
+        background: rgba(0, 230, 118, 0.12);
+        color: #00e676;
+    }
+
+    .cam-off {
+        background: rgba(255, 23, 68, 0.12);
+        color: #ff1744;
+    }
+
+    .cam-stats {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .cam-stat {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        font-size: 0.78rem;
+        color: #667;
+    }
+
+    .cam-stat strong {
+        color: #a0b0c8;
+        font-weight: 600;
+    }
+
+    /* ======================
+       SCROLLBAR ГЛОБАЛЬНЫЙ
+       ====================== */
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ======================
+       SAFE AREA (iOS notch / home bar)
+       ====================== */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        #dashboard {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .modal-content,
+        .report-modal-wide {
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+    }
+
+
+    /* ================================================================
+   ROUTE PLANNER — MODAL DIALOG
+   ================================================================ */
+
+    /* Кнопка «Маршрут» на дашборде */
+    .btn-route {
+        background: linear-gradient(135deg, #1565c0, #42a5f5) !important;
+        color: #fff !important;
+    }
+
+    .btn-route:hover {
+        opacity: 0.88;
+    }
+
+    /* Оверлей */
+    #routeDialogOverlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+    }
+
+    #routeDialogOverlay.active {
+        display: flex;
+    }
+
+    /* Само диалоговое окно */
+    #routeDialog {
+        background: rgba(14, 17, 28, 0.97);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+        width: 360px;
+        max-width: calc(100vw - 32px);
+        max-height: 90vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Inter', sans-serif;
+        animation: rd-appear 0.2s ease;
+    }
+
+    @keyframes rd-appear {
+        from {
+            opacity: 0;
+            transform: translateY(-12px) scale(0.97);
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    /* Заголовок диалога */
+    .rd-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        font-size: 14px;
+        font-weight: 700;
+        color: #e0e0e0;
+        letter-spacing: 0.2px;
+    }
+
+    .rd-header button {
+        background: none;
+        border: none;
+        color: #78909c;
+        font-size: 20px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 2px 6px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+    }
+
+    .rd-header button:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+    }
+
+    /* Тело диалога */
+    .rd-body {
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+    }
+
+    /* ── Строки Откуда / Куда ─────────────────────────────────────── */
+    .rp-row {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .rp-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #78909c;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+    }
+
+    .rp-input-row {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .rp-input-row input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-size: 12.5px;
+        padding: 7px 10px;
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: 'Inter', sans-serif;
+        min-width: 0;
+    }
+
+    .rp-input-row input:focus {
+        border-color: #4fc3f7;
+    }
+
+    .rp-input-row input::placeholder {
+        color: #546e7a;
+    }
+
+    .rp-input-row button {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #90a4ae;
+        font-size: 13px;
+        height: 34px;
+        padding: 0 8px;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        flex-shrink: 0;
+    }
+
+    .rp-input-row button:hover {
+        background: rgba(79, 195, 247, 0.15);
+        color: #4fc3f7;
+    }
+
+    /* ── Кнопки действий ─────────────────────────────────────────── */
+    .rp-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .rp-actions button {
+        flex: 1;
+        padding: 9px 6px;
+        border-radius: 9px;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s, transform 0.1s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .rp-actions button:active {
+        transform: scale(0.97);
+    }
+
+    .rp-actions button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    #routeBuildBtn {
+        background: linear-gradient(135deg, #0277bd, #4fc3f7);
+        color: #fff;
+    }
+
+    #routeBuildBtn:hover:not(:disabled) {
+        opacity: 0.88;
+    }
+
+    #routeClearBtn {
+        background: rgba(255, 255, 255, 0.07);
+        color: #90a4ae;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #routeClearBtn:hover {
+        background: rgba(255, 82, 82, 0.15);
+        color: #ff5252;
+    }
+
+    /* ── Статус запроса ──────────────────────────────────────────── */
+    .route-status {
+        font-size: 12px;
+        min-height: 18px;
+        text-align: center;
+        border-radius: 6px;
+        padding: 2px 4px;
+        transition: color 0.2s;
+    }
+
+    .rs-ok {
+        color: #66bb6a;
+    }
+
+    .rs-error {
+        color: #ef5350;
+    }
+
+    .rs-loading {
+        color: #ffa726;
+    }
+
+    /* ── Карточки перекрёстков ───────────────────────────────────── */
+    #routeIntersections {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-height: 220px;
+        overflow-y: auto;
+    }
+
+    .ri-header {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #78909c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .ri-card {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: background 0.15s;
+    }
+
+    .ri-card:hover {
+        background: rgba(255, 255, 255, 0.07);
+    }
+
+    .ri-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .ri-dot-free {
+        background: #66bb6a;
+        box-shadow: 0 0 6px #66bb6a88;
+    }
+
+    .ri-dot-medium {
+        background: #ffa726;
+        box-shadow: 0 0 6px #ffa72688;
+    }
+
+    .ri-dot-busy {
+        background: #ef5350;
+        box-shadow: 0 0 6px #ef535088;
+    }
+
+    .ri-free {
+        border-left: 3px solid #66bb6a;
+    }
+
+    .ri-medium {
+        border-left: 3px solid #ffa726;
+    }
+
+    .ri-busy {
+        border-left: 3px solid #ef5350;
+    }
+
+    .ri-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ri-name {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #e0e0e0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ri-meta {
+        font-size: 10px;
+        color: #78909c;
+        margin-top: 1px;
+    }
+
+    .ri-dist {
+        font-size: 10px;
+        color: #546e7a;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .ri-loading,
+    .ri-empty,
+    .ri-error {
+        font-size: 11px;
+        color: #78909c;
+        text-align: center;
+        padding: 8px 0;
+    }
+
+    .ri-error {
+        color: #ef5350;
+    }
+
+    /* ── Подсказка «кликните на карту» ──────────────────────────── */
+    #routePickHint {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1050;
+        background: rgba(14, 17, 28, 0.92);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(79, 195, 247, 0.4);
+        border-radius: 24px;
+        padding: 10px 22px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4fc3f7;
+        pointer-events: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        animation: hint-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes hint-pulse {
+
+        0%,
+        100% {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(79, 195, 247, 0.3);
+        }
+
+        50% {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 8px rgba(79, 195, 247, 0);
+        }
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 480px) {
+        #routeDialog {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 16px 16px 0 0;
+        }
+
+        #routeDialogOverlay {
+            align-items: flex-end;
+        }
+    }
+
+
+    #routePanelHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        cursor: default;
+    }
+
+    #routePanelTitle {
+        font-size: 13px;
+        font-weight: 600;
+        color: #e0e0e0;
+        letter-spacing: 0.3px;
+    }
+
+    #routePanelToggle {
+        background: none;
+        border: none;
+        color: #90a4ae;
+        font-size: 11px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+    }
+
+    #routePanelToggle:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+    }
+
+    #routePanelBody {
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s;
+        max-height: 600px;
+        opacity: 1;
+        overflow: hidden;
+    }
+
+    #routePanelBody.collapsed {
+        max-height: 0;
+        opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    /* Строка «Откуда / Куда» */
+    .rp-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .rp-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: #78909c;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .rp-input-row {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .rp-input-row input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-size: 12px;
+        padding: 6px 10px;
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .rp-input-row input:focus {
+        border-color: #4fc3f7;
+    }
+
+    .rp-input-row input::placeholder {
+        color: #546e7a;
+    }
+
+    .rp-input-row button {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #90a4ae;
+        font-size: 14px;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .rp-input-row button:hover {
+        background: rgba(79, 195, 247, 0.15);
+        color: #4fc3f7;
+    }
+
+    /* Кнопки действий */
+    .rp-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .rp-actions button {
+        flex: 1;
+        padding: 8px 4px;
+        border-radius: 9px;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s, transform 0.1s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .rp-actions button:active {
+        transform: scale(0.97);
+    }
+
+    .rp-actions button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    #routeBuildBtn {
+        background: linear-gradient(135deg, #0288d1, #4fc3f7);
+        color: #fff;
+    }
+
+    #routeBuildBtn:hover:not(:disabled) {
+        opacity: 0.9;
+    }
+
+    #routeClearBtn {
+        background: rgba(255, 255, 255, 0.07);
+        color: #90a4ae;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #routeClearBtn:hover {
+        background: rgba(255, 82, 82, 0.15);
+        color: #ff5252;
+    }
+
+    /* Статус */
+    .route-status {
+        font-size: 11px;
+        min-height: 16px;
+        text-align: center;
+        border-radius: 6px;
+        padding: 0 4px;
+        transition: color 0.2s;
+    }
+
+    .rs-ok {
+        color: #66bb6a;
+    }
+
+    .rs-error {
+        color: #ef5350;
+    }
+
+    .rs-loading {
+        color: #ffa726;
+    }
+
+    /* ── Карточки перекрёстков ────────────────────────────────────── */
+    #routeIntersections {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-height: 240px;
+        overflow-y: auto;
+    }
+
+    .ri-header {
+        font-size: 11px;
+        font-weight: 600;
+        color: #78909c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .ri-card {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: background 0.15s;
+    }
+
+    .ri-card:hover {
+        background: rgba(255, 255, 255, 0.07);
+    }
+
+    /* Цветная точка статуса */
+    .ri-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .ri-dot-free {
+        background: #66bb6a;
+        box-shadow: 0 0 6px #66bb6a88;
+    }
+
+    .ri-dot-medium {
+        background: #ffa726;
+        box-shadow: 0 0 6px #ffa72688;
+    }
+
+    .ri-dot-busy {
+        background: #ef5350;
+        box-shadow: 0 0 6px #ef535088;
+    }
+
+    /* Левая граница карточки */
+    .ri-free {
+        border-left: 3px solid #66bb6a;
+    }
+
+    .ri-medium {
+        border-left: 3px solid #ffa726;
+    }
+
+    .ri-busy {
+        border-left: 3px solid #ef5350;
+    }
+
+    .ri-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ri-name {
+        font-size: 11px;
+        font-weight: 600;
+        color: #e0e0e0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ri-meta {
+        font-size: 10px;
+        color: #78909c;
+        margin-top: 1px;
+    }
+
+    .ri-dist {
+        font-size: 10px;
+        color: #546e7a;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .ri-loading,
+    .ri-empty,
+    .ri-error {
+        font-size: 11px;
+        color: #78909c;
+        text-align: center;
+        padding: 8px 0;
+    }
+
+    .ri-error {
+        color: #ef5350;
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 480px) {
+        #route-panel {
+            right: 8px;
+            top: 8px;
+            width: calc(100vw - 16px);
+            max-width: 340px;
+        }
+    }
+
+    /* ================================================================
+   ADMIN — ВКЛАДКА «КАМЕРЫ» (stream viewer)
+   ================================================================ */
+
+    /* Двухколоночный лейаут */
+    .stream-layout {
+        display: flex;
+        gap: 0;
+        height: 460px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    /* Левая панель — список камер */
+    .stream-sidebar {
+        width: 200px;
+        flex-shrink: 0;
+        background: rgba(0, 0, 0, 0.3);
+        border-right: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stream-sidebar-title {
+        padding: 10px 14px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #78909c;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stream-cam-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    /* Кнопка камеры */
+    .stream-cam-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        color: #b0bec5;
+        font-size: 11.5px;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .stream-cam-btn:hover {
+        background: rgba(79, 195, 247, 0.1);
+        border-color: rgba(79, 195, 247, 0.3);
+        color: #e0e0e0;
+    }
+
+    .stream-cam-btn.active {
+        background: rgba(79, 195, 247, 0.18);
+        border-color: #4fc3f7;
+        color: #fff;
+    }
+
+    .scb-icon {
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .scb-name {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 11px;
+        line-height: 1.3;
+    }
+
+    .scb-cars {
+        font-size: 10px;
+        color: #546e7a;
+        flex-shrink: 0;
+    }
+
+    /* Правая панель — плеер */
+    .stream-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #000;
+        min-width: 0;
+    }
+
+    .stream-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        min-height: 38px;
+    }
+
+    .stream-cam-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #90a4ae;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .stream-stop-btn {
+        background: rgba(255, 82, 82, 0.12);
+        border: 1px solid rgba(255, 82, 82, 0.25);
+        border-radius: 6px;
+        color: #ff5252;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.15s;
+    }
+
+    .stream-stop-btn:hover {
+        background: rgba(255, 82, 82, 0.25);
+    }
+
+    /* Область видео */
+    .stream-viewer {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0a0a0a;
+    }
+
+    #stream-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+    /* Заглушка «выберите камеру» */
+    .stream-placeholder {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: #37474f;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .stream-placeholder>div:first-child {
+        font-size: 36px;
+        opacity: 0.4;
+    }
+
+    .stream-err {
+        font-size: 11px;
+        color: #ef5350;
+        margin-top: 4px;
+    }
+
+    /* Легенда цветов */
+    .stream-legend {
+        display: flex;
+        gap: 16px;
+        padding: 7px 14px;
+        background: rgba(0, 0, 0, 0.4);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        flex-shrink: 0;
+    }
+
+    .sl-item {
+        font-size: 10.5px;
+        color: #78909c;
+    }
+
+    .sl-green {
+        color: #66bb6a;
+    }
+
+    .sl-yellow {
+        color: #ffa726;
+    }
+
+    .sl-red {
+        color: #ef5350;
+    }
+
+    /* Вспомогательные классы внутри списка */
+    .stream-loading {
+        font-size: 11px;
+        color: #546e7a;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .stream-error {
+        font-size: 11px;
+        color: #ef5350;
+        padding: 12px;
+        text-align: center;
+    }
+
+    /* Адаптация для малых экранов */
+    @media (max-width: 600px) {
+        .stream-layout {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .stream-sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .stream-cam-list {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .stream-cam-btn {
+            width: auto;
+            flex: 0 0 auto;
+        }
+
+        .stream-viewer {
+            height: 240px;
+        }
+    }
+
+    /* ================================================================
+   STREAM — кнопка «⛶ На весь экран» и fullscreen оверлей
+   ================================================================ */
+
+    .stream-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    /* Кнопка развернуть */
+    .stream-expand-btn {
+        background: rgba(79, 195, 247, 0.12);
+        border: 1px solid rgba(79, 195, 247, 0.25);
+        border-radius: 6px;
+        color: #4fc3f7;
+        font-size: 16px;
+        line-height: 1;
+        padding: 3px 8px;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+    }
+
+    .stream-expand-btn:hover {
+        background: rgba(79, 195, 247, 0.25);
+        border-color: #4fc3f7;
+    }
+
+    /* ── Fullscreen оверлей ──────────────────────────────────────── */
+    .stream-fs-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: rgba(0, 0, 0, 0.88);
+        backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .stream-fs-overlay.active {
+        display: flex;
+        animation: fsOverlayIn 0.2s ease;
+    }
+
+    @keyframes fsOverlayIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Контейнер окна */
+    .stream-fs-box {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 1280px;
+        max-height: calc(100vh - 48px);
+        background: #0a0a0a;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+        animation: fsBoxIn 0.22s cubic-bezier(.22, .68, 0, 1.2);
+    }
+
+    @keyframes fsBoxIn {
+        from {
+            transform: scale(0.94);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* Шапка fullscreen */
+    .stream-fs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        background: rgba(255, 255, 255, 0.04);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        flex-shrink: 0;
+    }
+
+    .stream-fs-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #90a4ae;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .stream-fs-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .stream-fs-stop-btn {
+        background: rgba(255, 82, 82, 0.12);
+        border: 1px solid rgba(255, 82, 82, 0.3);
+        border-radius: 6px;
+        color: #ff5252;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 12px;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .stream-fs-stop-btn:hover {
+        background: rgba(255, 82, 82, 0.25);
+    }
+
+    .stream-fs-close-btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 6px;
+        color: #90a4ae;
+        font-size: 16px;
+        line-height: 1;
+        padding: 4px 10px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+    }
+
+    .stream-fs-close-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+    }
+
+    /* Область видео fullscreen */
+    .stream-fs-viewer {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        min-height: 0;
+    }
+
+    #stream-fs-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+    /* ======================
+       ПРОГНОЗ МАРШРУТА — сценарии сейчас / +30 мин
+       ====================== */
+    .ri-scenario {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+        margin-top: 3px;
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    .ri-scenario-label {
+        color: #546e7a;
+        font-size: 9.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        flex-shrink: 0;
+        min-width: 42px;
+    }
+
+    .ri-scenario-val {
+        color: #b0bec5;
+    }
+
+    .ri-scenario-future .ri-scenario-label {
+        color: #4fc3f7;
+    }
+
+    .ri-scenario-future .ri-scenario-val {
+        color: #90caf9;
+    }
+
+    /* ══════════════════════════════════════════
+   ВКЛАДКА «ГРАФИК» — гистограмма трафика
+══════════════════════════════════════════ */
+    .chart-filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: flex-end;
+        margin-bottom: 14px;
+    }
+
+    .chart-filter-row .form-group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .chart-filter-row .form-group label {
+        font-size: 12px;
+        color: #90a4ae;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .chart-filter-row #buildChartBtn {
+        align-self: flex-end;
+        flex: 0 0 auto;
+        padding: 9px 20px;
+        background: linear-gradient(135deg, #0091ea, #0064b0);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.15s;
+        white-space: nowrap;
+    }
+
+    .chart-filter-row #buildChartBtn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .traffic-chart-wrap {
+        position: relative;
+        width: 100%;
+        height: 340px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 10px;
+        padding: 12px;
+        box-sizing: border-box;
+    }
+
+    .traffic-chart-wrap canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .chart-status-msg {
+        font-size: 13px;
+        color: #ffa726;
+        text-align: center;
+        margin-bottom: 8px;
+        min-height: 18px;
+    }
