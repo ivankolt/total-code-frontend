@@ -797,13 +797,13 @@
             min-height: 38px !important;
         }
 
-        /* ----- Компас — сверху по центру ----- */
+        /* ----- Компас — сверху слева ----- */
         #custom-compass {
             top: 60px;
             bottom: auto;
             right: auto;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 14px;
+            transform: none;
             width: 48px;
             height: 48px;
         }
