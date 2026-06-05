@@ -918,14 +918,42 @@
             /* избегаем zoom на iOS */
         }
 
-        /* Широкий репорт-модал */
+        /* Широкий репорт-модал — фиксированная высота, скролл внутри */
         .report-modal-wide {
             max-width: 100% !important;
             width: 100% !important;
             margin: 0 !important;
             border-radius: 20px 20px 0 0 !important;
-            padding: 20px 16px 34px !important;
+            padding: 16px 16px 0 !important;
+            max-height: 85vh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
         }
+
+        /* Заголовок и вкладки — не сжимаются */
+        .report-modal-wide .report-modal-title,
+        .report-modal-wide .report-tabs {
+            flex-shrink: 0;
+        }
+
+        /* Кнопка закрытия — всегда доступна */
+        .report-modal-wide .close-report {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            z-index: 10;
+        }
+
+        /* Контент вкладок — прокручивается */
+        .report-modal-wide .report-tab-content.active {
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            padding-bottom: 24px;
+            -webkit-overflow-scrolling: touch;
+        }
+
 
         /* Вкладки — крупнее */
         .report-tab {
