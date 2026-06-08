@@ -1,6 +1,6 @@
 ﻿// js/auth.js
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://ecc9c69a3d8893.lhr.life';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://4d36eda26bac77.lhr.life';
 
 // Переменная для хранения токена в памяти (или localStorage)
 const TOKEN_KEY = 'traffic_monitor_access_token';
