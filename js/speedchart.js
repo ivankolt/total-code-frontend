@@ -1,5 +1,5 @@
 ﻿// speedchart.js
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://79f72884a38bef.lhr.life';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://sally-telescope-happens-coordinator.trycloudflare.com';
 
 let chart;
 const directions = ['С', 'Ю', 'З', 'В'];

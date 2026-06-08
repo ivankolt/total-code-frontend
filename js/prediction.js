@@ -1,7 +1,7 @@
 ﻿// js/prediction.js
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://79f72884a38bef.lhr.life';
+    : 'https://sally-telescope-happens-coordinator.trycloudflare.com';
 
 export function initPrediction() {
     const btn = document.getElementById('getAiPredictionBtn');
