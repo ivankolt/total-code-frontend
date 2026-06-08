@@ -1,14 +1,13 @@
 // api.js — отвечает за работу с сервером (fetch)
-// Если страница открыта через localhost — ходим на порт 8000
-// Иначе — относительный путь (фронт и API на одном домене через ngrok)
+// Автоматически определяет URL: локально или через туннель
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : '';   // относительный: /api/... → тот же хост
+    : 'https://api.total-code.ru';
 
 // Глобальный доступ для всех модулей
 window.API_BASE = API_BASE;
 
-// Простой fetch (ngrok-заголовок больше не нужен — нет CORS)
+// Простой fetch
 window.apiFetch = function(url, options = {}) {
     return fetch(url, options);
 };

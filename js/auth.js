@@ -2,7 +2,7 @@
 
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : '';   // относительный путь — фронт и API на одном домене через ngrok
+    : 'https://api.total-code.ru';
 
 // Переменная для хранения токена в памяти (или localStorage)
 const TOKEN_KEY = 'traffic_monitor_access_token';
@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Простой fetch — CORS не нужен, фронт и API на одном домене
     function authFetch(url, options = {}) {
         return fetch(url, options);
     }
@@ -95,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const formData = new FormData(form);
 
-            // 2 попытки с задержкой — защита от случайного таймаута
             let lastError = null;
             for (let attempt = 1; attempt <= 2; attempt++) {
                 try {
@@ -114,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Войти в систему'; }
                         return;
                     } else {
-                        // HTTP ошибка (401) — повторять не нужно
                         errorMsg.style.display = 'block';
                         errorMsg.textContent = 'Ошибка входа. Проверьте данные.';
                         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Войти в систему'; }
@@ -127,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Обе попытки провалились
             console.error('Login error:', lastError);
             errorMsg.style.display = 'block';
             errorMsg.textContent = 'Ошибка соединения. Повторите попытку.';
