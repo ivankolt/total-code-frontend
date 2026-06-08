@@ -1,4 +1,4 @@
-﻿// js/auth.js
+// js/auth.js
 
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
@@ -79,36 +79,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Локальный fetch с ngrok-заголовком — не зависит от api.js
+    const NGROK_HDR = { 'ngrok-skip-browser-warning': '1' };
+    function authFetch(url, options = {}) {
+        options.headers = { ...NGROK_HDR, ...(options.headers || {}) };
+        return fetch(url, options);
+    }
+
     if (form) {
         form.onsubmit = async function (e) {
             e.preventDefault();
-            errorMsg.style.display = "none";
+            const submitBtn = form.querySelector('button[type="submit"]');
+            errorMsg.style.display = 'none';
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Вход...'; }
 
             const formData = new FormData(form);
 
-            try {
-                const response = await window.apiFetch(`${API_BASE}/token`, {
-                    method: 'POST',
-                    body: formData
-                });
+            // 2 попытки с задержкой — защита от случайного таймаута
+            let lastError = null;
+            for (let attempt = 1; attempt <= 2; attempt++) {
+                try {
+                    const response = await authFetch(`${API_BASE}/token`, {
+                        method: 'POST',
+                        body: formData
+                    });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    localStorage.setItem(TOKEN_KEY, data.access_token);
-
-                    modal.style.display = "none";
-                    form.reset();
-                    updateAuthUI();
-                    console.log("Успешный вход!");
-                } else {
-                    errorMsg.style.display = "block";
-                    errorMsg.textContent = "Ошибка входа. Проверьте данные.";
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem(TOKEN_KEY, data.access_token);
+                        modal.style.display = 'none';
+                        form.reset();
+                        updateAuthUI();
+                        console.log('✅ Успешный вход!');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Войти в систему'; }
+                        return;
+                    } else {
+                        // HTTP ошибка (401) — повторять не нужно
+                        errorMsg.style.display = 'block';
+                        errorMsg.textContent = 'Ошибка входа. Проверьте данные.';
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Войти в систему'; }
+                        return;
+                    }
+                } catch (error) {
+                    lastError = error;
+                    console.warn(`Попытка ${attempt} не удалась:`, error);
+                    if (attempt < 2) await new Promise(r => setTimeout(r, 1500));
                 }
-            } catch (error) {
-                console.error("Login error:", error);
-                errorMsg.style.display = "block";
-                errorMsg.textContent = "Ошибка соединения с сервером";
             }
+
+            // Обе попытки провалились
+            console.error('Login error:', lastError);
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = 'Ошибка соединения. Повторите попытку.';
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Войти в систему'; }
         };
     }
 });

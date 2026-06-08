@@ -178,14 +178,16 @@
         <div class="modal-content">
             <button class="close-modal" aria-label="Закрыть">&times;</button>
             <h2>Вход администратора</h2>
-            <form id="loginForm">
+            <form id="loginForm" autocomplete="off">
                 <div class="form-group">
                     <label for="username">Имя пользователя</label>
-                    <input type="text" id="username" name="username" required placeholder="admin">
+                    <input type="text" id="username" name="username" required placeholder="admin"
+                           autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="password">Пароль</label>
-                    <input type="password" id="password" name="password" required placeholder="*****">
+                    <input type="password" id="password" name="password" required placeholder="*****"
+                           autocomplete="new-password">
                 </div>
                 <div id="loginError" class="error-msg" style="display:none; color: #ff5252; margin-bottom: 10px;">
                     Неверный логин или пароль
@@ -401,7 +403,8 @@
         });
     </script>
 
-    <!-- Your JS modules -->
+    <!-- api.js ПЕРВЫМ — чтобы window.apiFetch был готов до auth.js -->
+    <script type="module" src="js/api.js"></script>
     <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/speedchart.js"></script>
     <script type="module" src="js/dashboard_resize.js"></script>
@@ -409,7 +412,6 @@
     <script type="module" src="js/map.js"></script>
     <script type="module" src="js/heatmap.js"></script>
     <script type="module" src="js/traffic_lights.js"></script>
-    <script type="module" src="js/api.js"></script>
     <script type="module" src="js/voicealert.js"></script>
 
 
