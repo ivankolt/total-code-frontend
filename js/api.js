@@ -1,13 +1,13 @@
-// api.js — отвечает за работу с сервером (fetch)
-// Автоматически определяет URL: локально или через туннель
+﻿// api.js — отвечает за работу с сервером (fetch)
+// URL туннеля подставляется автоматически скриптом start.ps1
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://api.total-code.ru';
+    : 'https://79f72884a38bef.lhr.life';
 
 // Глобальный доступ для всех модулей
 window.API_BASE = API_BASE;
 
-// Простой fetch
+// Универсальный fetch
 window.apiFetch = function(url, options = {}) {
     return fetch(url, options);
 };
@@ -24,9 +24,7 @@ export async function triggerVoiceAlert() {
     try {
         const response = await window.apiFetch(`${API_BASE}/api/voice-alert`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
         if (!response.ok) throw new Error('Network response was not ok');
         return await response.json();
