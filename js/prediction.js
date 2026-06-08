@@ -1,7 +1,7 @@
 ﻿// js/prediction.js
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://api.total-code.ru';
+    : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 export function initPrediction() {
     const btn = document.getElementById('getAiPredictionBtn');
@@ -34,7 +34,7 @@ export function initPrediction() {
         const future = getFutureEkbTime(30);
 
         try {
-            const response = await fetch(
+            const response = await window.apiFetch(
                 `${API_BASE}/api/predict?camera_id=${camId}&day=${future.day}&hour=${future.hour}&minute=${future.minute}`
             );
             const data = await response.json();

@@ -1,6 +1,6 @@
 ﻿// js/auth.js
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 // Переменная для хранения токена в памяти (или localStorage)
 const TOKEN_KEY = 'traffic_monitor_access_token';
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
 
             try {
-                const response = await fetch(`${API_BASE}/token`, {
+                const response = await window.apiFetch(`${API_BASE}/token`, {
                     method: 'POST',
                     body: formData
                 });

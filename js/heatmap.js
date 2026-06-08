@@ -1,4 +1,4 @@
-﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 let heatmapPoints = [];
 const MAX_POINTS = 10000;
@@ -49,7 +49,7 @@ export function initializeHeatmap(map) {
 
     setInterval(async () => {
         try {
-            const resp = await fetch(`${API_BASE}/api/cars`, {
+            const resp = await window.apiFetch(`${API_BASE}/api/cars`, {
                 headers: {
                     'ngrok-skip-browser-warning': 'true'
                 }

@@ -1,6 +1,6 @@
 ﻿import { map } from './map.js';
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 export async function initCameraSelector() {
     const selector = document.getElementById('cameraSelector');
@@ -8,7 +8,7 @@ export async function initCameraSelector() {
     try {
         // --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
         // Добавляем headers, чтобы Ngrok пропустил запрос и отдал JSON
-        const response = await fetch(`${API_BASE}/api/cameras`, {
+        const response = await window.apiFetch(`${API_BASE}/api/cameras`, {
             headers: {
                 'ngrok-skip-browser-warning': 'true'
             }

@@ -1,5 +1,5 @@
 ﻿// speedchart.js
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 let chart;
 const directions = ['С', 'Ю', 'З', 'В'];
@@ -55,7 +55,7 @@ async function updateChart() {
 
     try {
         const camId = window.currentCameraId || 'all';
-        const resp = await fetch(`${API_BASE}/api/speed-by-direction?camera_id=${window.currentCameraId}`, {
+        const resp = await window.apiFetch(`${API_BASE}/api/speed-by-direction?camera_id=${window.currentCameraId}`, {
             headers: { 'ngrok-skip-browser-warning': 'true' }
         });
         const data = await resp.json();

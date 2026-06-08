@@ -3,7 +3,7 @@
  * Маршрут: модальное диалоговое окно, клик на карту для точек, OSRM, анализ перекрёстков.
  */
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 // Mapbox Directions API: работает из браузера без CORS, токен уже есть в map.js
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiaXZhbmtvbHRzIiwiYSI6ImNtZ25kdmRlcjFlZTQybHF3MnFkYmVsYnAifQ.lotzKzWSmKnbER_ql8T1ng';
 const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
@@ -150,7 +150,7 @@ async function _geocode(type) {
     _setStatus('Поиск адреса...', 'loading');
     try {
         const url = `${NOMINATIM}?q=${encodeURIComponent(query)}&format=json&limit=1&accept-language=ru`;
-        const res = await fetch(url);
+        const res = await window.apiFetch(url);
         const data = await res.json();
 
         if (!data.length) { _setStatus('Адрес не найден', 'error'); return; }
@@ -212,7 +212,7 @@ async function _buildRoute() {
             `${fromCoords[0]},${fromCoords[1]};${toCoords[0]},${toCoords[1]}` +
             `?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
 
-        const res = await fetch(url);
+        const res = await window.apiFetch(url);
         const data = await res.json();
 
         if (!data.routes || !data.routes.length) {
@@ -267,7 +267,7 @@ async function _checkIntersections(routeCoords) {
     panel.innerHTML = '<div class="ri-loading">Анализ перекрёстков...</div>';
 
     try {
-        const res = await fetch(`${API_BASE}/api/cameras`);
+        const res = await window.apiFetch(`${API_BASE}/api/cameras`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const cameras = await res.json();
 
@@ -313,7 +313,7 @@ async function _fetchRoutePrediction(cameraIds, baseDurationSec, distKm) {
 
     try {
         const idsParam = cameraIds.join(',');
-        const res = await fetch(
+        const res = await window.apiFetch(
             `${API_BASE}/api/route-predict?camera_ids=${encodeURIComponent(idsParam)}&base_duration=${Math.round(baseDurationSec)}`
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);

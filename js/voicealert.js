@@ -5,7 +5,7 @@
  * Сервер не используется для аудио.
  */
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 const DENSITY_LEVELS = {
     low:    { label: 'НИЗКАЯ',   color: '#4CAF50', emoji: '✅', description: 'Пробок нет' },
@@ -63,7 +63,7 @@ class VoiceAlertController {
 
         try {
             const camId   = window.currentCameraId || 'all';
-            const response = await fetch(
+            const response = await window.apiFetch(
                 `${API_BASE}/api/traffic-status?camera_id=${camId}`,
                 { headers: { 'ngrok-skip-browser-warning': 'true' } }
             );
@@ -95,7 +95,7 @@ class VoiceAlertController {
 
         try {
             const camId   = window.currentCameraId || 'all';
-            const response = await fetch(
+            const response = await window.apiFetch(
                 `${API_BASE}/api/traffic-status?camera_id=${camId}`,
                 { headers: { 'ngrok-skip-browser-warning': 'true' } }
             );

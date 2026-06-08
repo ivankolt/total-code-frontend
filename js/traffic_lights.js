@@ -5,7 +5,7 @@
 
 import { map } from './map.js';
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 // Смещения по умолчанию для 4 направлений (в градусах GPS, ~15-20 метров)
 const DIR_OFFSETS_DEFAULT = {
@@ -97,7 +97,7 @@ function upsertLightMarker(camId, direction, phase, avgSpeed, carCount, centerLo
  */
 async function updateTrafficLights() {
     try {
-        const resp = await fetch(`${API_BASE}/api/traffic-lights`, {
+        const resp = await window.apiFetch(`${API_BASE}/api/traffic-lights`, {
             headers: { 'ngrok-skip-browser-warning': 'true' }
         });
 

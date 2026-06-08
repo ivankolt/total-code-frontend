@@ -1,4 +1,4 @@
-﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 let avgSpeedElement;
 let liveCarsElement;
@@ -19,10 +19,10 @@ async function updateAvgSpeed() {
     try {
         // Запрашиваем скорость и кол-во машин параллельно
         const [speedResp, statusResp] = await Promise.all([
-            fetch(`${API_BASE}/api/speed-by-direction?camera_id=${camParam}`, {
+            window.apiFetch(`${API_BASE}/api/speed-by-direction?camera_id=${camParam}`, {
                 headers: { 'ngrok-skip-browser-warning': 'true' }
             }),
-            fetch(`${API_BASE}/api/traffic-status?camera_id=${camParam}`, {
+            window.apiFetch(`${API_BASE}/api/traffic-status?camera_id=${camParam}`, {
                 headers: { 'ngrok-skip-browser-warning': 'true' }
             })
         ]);

@@ -1,21 +1,32 @@
-﻿// api.js — отвечает за работу с сервером (fetch)
+// api.js — отвечает за работу с сервером (fetch)
 // Автоматически определяет URL: локально или продакшн
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://api.total-code.ru';
+    : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
+// Глобальный доступ для всех модулей
+window.API_BASE = API_BASE;
+
+// Заголовки для ngrok free (пропуск interstitial-страницы)
+const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '1' };
+
+// Универсальный fetch с ngrok-заголовком
+window.apiFetch = function(url, options = {}) {
+    options.headers = { ...NGROK_HEADERS, ...(options.headers || {}) };
+    return fetch(url, options);
+};
 
 export async function fetchCarData() {
     const camId = window.currentCameraId || 'all';
     const apiUrl = `${API_BASE}/api/cars?camera_id=${camId}`;
-    const response = await fetch(apiUrl);
+    const response = await window.apiFetch(apiUrl);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
 }
 
 export async function triggerVoiceAlert() {
     try {
-        const response = await fetch(`${API_BASE}/api/voice-alert`, {
+        const response = await window.apiFetch(`${API_BASE}/api/voice-alert`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

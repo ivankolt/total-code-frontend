@@ -1,6 +1,6 @@
 ﻿import { getToken, isLoggedIn } from './auth.js';
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
 
 let cpuChart = null;
 let metricsInterval = null;
@@ -93,7 +93,7 @@ async function loadMetrics() {
     if (!isLoggedIn()) return;
 
     try {
-        const res = await fetch(`${API_BASE}/api/admin/system-metrics`, {
+        const res = await window.apiFetch(`${API_BASE}/api/admin/system-metrics`, {
             headers: authHeaders()
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -204,7 +204,7 @@ async function loadDashboard() {
     if (!isLoggedIn()) return;
 
     try {
-        const res = await fetch(`${API_BASE}/api/admin/dashboard`, {
+        const res = await window.apiFetch(`${API_BASE}/api/admin/dashboard`, {
             headers: authHeaders()
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -296,7 +296,7 @@ async function downloadDirect(endpoint, filename) {
 
 async function triggerDownload(url, filename) {
     try {
-        const res = await fetch(url, { headers: authHeaders() });
+        const res = await window.apiFetch(url, { headers: authHeaders() });
         if (!res.ok) {
             const txt = await res.text();
             console.error('Server error:', txt);
@@ -338,7 +338,7 @@ async function loadStreamCameras() {
     list.innerHTML = '<div class="stream-loading">Загрузка камер...</div>';
 
     try {
-        const res = await fetch(`${API_BASE}/api/cameras`);
+        const res = await window.apiFetch(`${API_BASE}/api/cameras`);
         const cameras = await res.json();
 
         if (!cameras.length) {
@@ -518,7 +518,7 @@ async function populateChartCameraSelect() {
     if (!sel) return;
 
     try {
-        const res  = await fetch(`${API_BASE}/api/cameras`);
+        const res  = await window.apiFetch(`${API_BASE}/api/cameras`);
         const list = await res.json();
 
         // Удаляем старые опции кроме «Все»
@@ -554,7 +554,7 @@ async function buildTrafficChart() {
         + `&camera_id=${encodeURIComponent(camId)}`;
 
     try {
-        const res  = await fetch(url, { headers: authHeaders() });
+        const res  = await window.apiFetch(url, { headers: authHeaders() });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
 
