@@ -2,7 +2,7 @@
 // Автоматически определяет URL: локально или продакшн
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://4d36eda26bac77.lhr.life';
+    : 'https://api.total-code.ru';
 
 
 export async function fetchCarData() {
