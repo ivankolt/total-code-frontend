@@ -1,18 +1,15 @@
 // api.js — отвечает за работу с сервером (fetch)
-// Автоматически определяет URL: локально или продакшн
+// Если страница открыта через localhost — ходим на порт 8000
+// Иначе — относительный путь (фронт и API на одном домене через ngrok)
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
+    : '';   // относительный: /api/... → тот же хост
 
 // Глобальный доступ для всех модулей
 window.API_BASE = API_BASE;
 
-// Заголовки для ngrok free (пропуск interstitial-страницы)
-const NGROK_HEADERS = { 'ngrok-skip-browser-warning': '1' };
-
-// Универсальный fetch с ngrok-заголовком
+// Простой fetch (ngrok-заголовок больше не нужен — нет CORS)
 window.apiFetch = function(url, options = {}) {
-    options.headers = { ...NGROK_HEADERS, ...(options.headers || {}) };
     return fetch(url, options);
 };
 

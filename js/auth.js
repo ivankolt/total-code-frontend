@@ -1,6 +1,8 @@
 // js/auth.js
 
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://hunter-supergallant-slurringly.ngrok-free.dev';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000'
+    : '';   // относительный путь — фронт и API на одном домене через ngrok
 
 // Переменная для хранения токена в памяти (или localStorage)
 const TOKEN_KEY = 'traffic_monitor_access_token';
@@ -79,10 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Локальный fetch с ngrok-заголовком — не зависит от api.js
-    const NGROK_HDR = { 'ngrok-skip-browser-warning': '1' };
+    // Простой fetch — CORS не нужен, фронт и API на одном домене
     function authFetch(url, options = {}) {
-        options.headers = { ...NGROK_HDR, ...(options.headers || {}) };
         return fetch(url, options);
     }
 
