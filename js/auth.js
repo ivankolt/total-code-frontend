@@ -2,7 +2,7 @@
 
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://sally-telescope-happens-coordinator.trycloudflare.com';
+    : 'https://bfylh-77-222-99-129.run.pinggy-free.link';
 
 // Переменная для хранения токена в памяти (или localStorage)
 const TOKEN_KEY = 'traffic_monitor_access_token';

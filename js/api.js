@@ -2,7 +2,7 @@
 // URL туннеля подставляется автоматически скриптом start.ps1
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://sally-telescope-happens-coordinator.trycloudflare.com';
+    : 'https://bfylh-77-222-99-129.run.pinggy-free.link';
 
 // Глобальный доступ для всех модулей
 window.API_BASE = API_BASE;
