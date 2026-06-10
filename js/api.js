@@ -6,9 +6,12 @@ const API_BASE = (window.location.hostname === 'localhost' || window.location.ho
 //     
 window.API_BASE = API_BASE;
 
-//  fetch
+//  fetch — всегда отправляем cookie для авторизации
 window.apiFetch = function(url, options = {}) {
-    return fetch(url, options);
+    return fetch(url, {
+        ...options,
+        credentials: 'include'  // ← обязательно для httpOnly JWT cookie
+    });
 };
 
 export async function fetchCarData() {
