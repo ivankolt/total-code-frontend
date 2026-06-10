@@ -1,4 +1,4 @@
-﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : window.location.origin;
+﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
 
 let heatmapPoints = [];
 const MAX_POINTS = 10000;
