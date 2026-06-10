@@ -1,4 +1,4 @@
-﻿import { getToken, isLoggedIn } from './auth.js';
+import { getToken, isLoggedIn } from './auth.js';
 
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
 
@@ -367,13 +367,12 @@ async function loadStreamCameras() {
 }
 
 function openStream(camId) {
-    const token  = getToken();
     const viewer = document.getElementById('stream-viewer');
     const label  = document.getElementById('stream-cam-label');
     const placeholder = document.getElementById('stream-placeholder');
 
-    if (!token) {
-        alert('Требуется авторизация');
+    if (!isLoggedIn()) {
+        alert('\u0422\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044f \u0430\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u044f');
         return;
     }
 
@@ -383,7 +382,8 @@ function openStream(camId) {
     const img = document.createElement('img');
     img.id  = 'stream-img';
     img.alt = camId;
-    img.src = `${API_BASE}/api/stream/${encodeURIComponent(camId)}?token=${encodeURIComponent(token)}`;
+    // Cookie (SameSite=None;Secure) отправляется браузером автоматически
+    img.src = `${API_BASE}/api/stream/${encodeURIComponent(camId)}`;
 
     img.onerror = () => {
         img.removeAttribute('src');
@@ -416,11 +416,10 @@ function stopStream() {
 
 // ─── Fullscreen просмотр потока ────────────────────────────────────────────────
 function openStreamFullscreen() {
-    const token = getToken();
     const camId = document.getElementById('stream-cam-label')?.textContent?.trim();
 
-    if (!camId) { alert('Сначала выберите камеру'); return; }
-    if (!token) { alert('Требуется авторизация');   return; }
+    if (!camId) { alert('\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043a\u0430\u043c\u0435\u0440\u0443'); return; }
+    if (!isLoggedIn()) { alert('\u0422\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044f \u0430\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u044f'); return; }
 
     const overlay       = document.getElementById('stream-fullscreen-overlay');
     const fsViewer      = document.getElementById('stream-fs-viewer');
@@ -434,7 +433,7 @@ function openStreamFullscreen() {
     const img = document.createElement('img');
     img.id  = 'stream-fs-img';
     img.alt = camId;
-    img.src = `${API_BASE}/api/stream/${encodeURIComponent(camId)}?token=${encodeURIComponent(token)}`;
+    img.src = `${API_BASE}/api/stream/${encodeURIComponent(camId)}`;
     img.onerror = () => {
         img.removeAttribute('src');
         if (fsPlaceholder) fsPlaceholder.style.display = 'flex';
