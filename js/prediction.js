@@ -1,7 +1,7 @@
-﻿// js/prediction.js
+// js/prediction.js
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : window.location.origin;
+    : 'https://api.total-code.ru';
 
 export function initPrediction() {
     const btn = document.getElementById('getAiPredictionBtn');
@@ -10,13 +10,13 @@ export function initPrediction() {
 
     if (!btn) return;
 
-    // ��������� ����� ������� ����� � ������ ������
+    // Обновляем метку времени при вызове функции
     function updateTimeLabel() {
         if (!timeLabel) return;
-        const future = getFutureEkbTime(30); // ������� �� +30 �����
+        const future = getFutureEkbTime(30); // прогноз на +30 минут
         const hh = String(future.hour).padStart(2, '0');
         const mm = String(future.minute).padStart(2, '0');
-        timeLabel.textContent = `����� 30 ��� > ${hh}:${mm}`;
+        timeLabel.textContent = `Через 30 мин > ${hh}:${mm}`;
     }
 
     updateTimeLabel();
@@ -26,11 +26,11 @@ export function initPrediction() {
         const camId = cameraSelector.value;
 
         if (camId === 'all') {
-            alert('������� �������� ����������� �� ����� ��� � ������');
+            alert('Выберите конкретную камеру для AI-прогноза');
             return;
         }
 
-        // ������������ �� +30 ����� �����
+        // Прогнозируем на +30 минут вперёд
         const future = getFutureEkbTime(30);
 
         try {
@@ -41,26 +41,26 @@ export function initPrediction() {
 
             document.getElementById('aiResult').style.display = 'block';
             document.getElementById('aiCars').innerText = data.predicted_cars;
-            document.getElementById('aiSpeed').innerText = data.predicted_speed + ' ��/�';
+            document.getElementById('aiSpeed').innerText = data.predicted_speed + ' км/ч';
 
             document.getElementById('aiCars').style.color = data.predicted_cars > 100 ? '#ff5252' : '#4caf50';
 
         } catch (error) {
-            console.error('������:', error);
+            console.error('Ошибка прогноза:', error);
         }
     });
 }
 
-/** ������� ����� ��� (UTC+5) + offsetMinutes ����� ����� */
+/** Текущее время Екб (UTC+5) + offsetMinutes минут вперёд */
 function getFutureEkbTime(offsetMinutes = 0) {
     const now = new Date();
-    // ��������� � UTC+5 � ��������� ��������
+    // Переводим в UTC+5 с учётом смещения браузера
     const ekbMs = now.getTime() + (now.getTimezoneOffset() * 60000) + (3600000 * 5)
                   + (offsetMinutes * 60000);
     const ekbDate = new Date(ekbMs);
 
     let jsDay = ekbDate.getDay();
-    let pyDay = (jsDay === 0) ? 6 : jsDay - 1; // ��=0, ��=6
+    let pyDay = (jsDay === 0) ? 6 : jsDay - 1; // Пн=0, Вс=6
 
     return {
         hour: ekbDate.getHours(),
