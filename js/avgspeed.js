@@ -1,4 +1,4 @@
-﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://bfylh-77-222-99-129.run.pinggy-free.link';
+﻿const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : window.location.origin;
 
 let avgSpeedElement;
 let liveCarsElement;

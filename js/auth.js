@@ -1,44 +1,75 @@
-﻿// js/auth.js
+// js/auth.js
+// Токен теперь хранится в httpOnly cookie (устанавливается сервером).
+// JavaScript НЕ имеет доступа к токену — это и есть защита от XSS.
 
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://bfylh-77-222-99-129.run.pinggy-free.link';
+    : 'https://api.total-code.ru';
 
-// Переменная для хранения токена в памяти (или localStorage)
-const TOKEN_KEY = 'traffic_monitor_access_token';
-
-export function getToken() {
-    return localStorage.getItem(TOKEN_KEY);
-}
+// Флаг авторизации хранится только в памяти (сессионно)
+let _loggedIn = false;
 
 export function isLoggedIn() {
-    return !!getToken();
+    return _loggedIn;
 }
 
-export function logout() {
-    localStorage.removeItem(TOKEN_KEY);
+// getToken() - оставлен для совместимости (cookie автоматически отправляется браузером)
+export function getToken() {
+    return null; // Токен хранится в httpOnly cookie, JS не имеет к нему доступа
+}
+
+export async function logout() {
+    try {
+        // Просим сервер удалить httpOnly cookie
+        await fetch(`${API_BASE}/logout`, {
+            method: 'POST',
+            credentials: 'include'   // Обязательно для отправки cookie
+        });
+    } catch (e) {
+        console.warn('Logout request failed:', e);
+    }
+    _loggedIn = false;
     updateAuthUI();
     alert("Вы вышли из системы");
 }
 
-// Вспомогательная функция для заголовков запроса
+// Заголовки запроса — Authorization больше не нужен,
+// cookie отправляется браузером автоматически
 export function getAuthHeaders() {
-    const token = getToken();
-    const headers = {
-        'Content-Type': 'application/json'
-    };
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-    return headers;
+    return { 'Content-Type': 'application/json' };
 }
 
-// Функция обновления UI (кнопки войти/выйти)
+// Все запросы к API — с credentials: 'include'
+// чтобы браузер автоматически отправлял httpOnly cookie
+export function apiFetch(url, options = {}) {
+    return fetch(url, {
+        ...options,
+        credentials: 'include',
+        headers: {
+            ...getAuthHeaders(),
+            ...(options.headers || {})
+        }
+    });
+}
+
+// Проверяем авторизацию при загрузке страницы через /api/me
+async function checkAuth() {
+    try {
+        const res = await fetch(`${API_BASE}/api/me`, {
+            credentials: 'include'
+        });
+        _loggedIn = res.ok;
+    } catch {
+        _loggedIn = false;
+    }
+    updateAuthUI();
+}
+
 function updateAuthUI() {
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    if (isLoggedIn()) {
+    if (_loggedIn) {
         if (loginBtn) loginBtn.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
     } else {
@@ -47,7 +78,6 @@ function updateAuthUI() {
     }
 }
 
-// Логика модального окна и формы
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById("authModal");
     const btn = document.getElementById("loginBtn");
@@ -56,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById("loginForm");
     const errorMsg = document.getElementById("loginError");
 
-    updateAuthUI();
+    // Проверяем состояние авторизации по cookie
+    checkAuth();
 
     if (btn) {
         btn.onclick = function () {
@@ -81,10 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    function authFetch(url, options = {}) {
-        return fetch(url, options);
-    }
-
     if (form) {
         form.onsubmit = async function (e) {
             e.preventDefault();
@@ -97,23 +124,26 @@ document.addEventListener('DOMContentLoaded', () => {
             let lastError = null;
             for (let attempt = 1; attempt <= 2; attempt++) {
                 try {
-                    const response = await authFetch(`${API_BASE}/token`, {
+                    const response = await fetch(`${API_BASE}/token`, {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        credentials: 'include'  // Сервер установит httpOnly cookie
                     });
 
                     if (response.ok) {
-                        const data = await response.json();
-                        localStorage.setItem(TOKEN_KEY, data.access_token);
+                        // Токен сохранён в httpOnly cookie сервером автоматически
+                        _loggedIn = true;
                         modal.style.display = 'none';
                         form.reset();
                         updateAuthUI();
-                        console.log('✅ Успешный вход!');
+                        console.log('✅ Успешный вход! Токен сохранён в httpOnly cookie.');
                         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Войти в систему'; }
                         return;
                     } else {
                         errorMsg.style.display = 'block';
-                        errorMsg.textContent = 'Ошибка входа. Проверьте данные.';
+                        errorMsg.textContent = response.status === 429
+                            ? 'Слишком много попыток. Подождите минуту.'
+                            : 'Ошибка входа. Проверьте данные.';
                         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Войти в систему'; }
                         return;
                     }

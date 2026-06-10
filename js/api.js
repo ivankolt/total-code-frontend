@@ -1,13 +1,12 @@
-﻿// api.js — отвечает за работу с сервером (fetch)
-// URL туннеля подставляется автоматически скриптом start.ps1
+// api.js — запросы к бэкенду
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
-    : 'https://bfylh-77-222-99-129.run.pinggy-free.link';
+    : 'https://api.total-code.ru';  // ← постоянный домен через VPS
 
-// Глобальный доступ для всех модулей
+//     
 window.API_BASE = API_BASE;
 
-// Универсальный fetch
+//  fetch
 window.apiFetch = function(url, options = {}) {
     return fetch(url, options);
 };
