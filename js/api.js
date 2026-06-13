@@ -6,13 +6,20 @@ const API_BASE = (window.location.hostname === 'localhost' || window.location.ho
 //     
 window.API_BASE = API_BASE;
 
-//  fetch — всегда отправляем cookie для авторизации
+// apiFetch — credentials:include ТОЛЬКО для нашего бэкенда.
+// Внешние API (Mapbox, Nominatim, OSRM) не могут принять wildcard ACAO + credentials.
 window.apiFetch = function(url, options = {}) {
+    const isOwnBackend = !url.startsWith('http') ||
+        url.includes('localhost') ||
+        url.includes('127.0.0.1') ||
+        url.includes('total-code.ru');
+
     return fetch(url, {
         ...options,
-        credentials: 'include'  // ← обязательно для httpOnly JWT cookie
+        ...(isOwnBackend ? { credentials: 'include' } : {})
     });
 };
+
 
 export async function fetchCarData() {
     const camId = window.currentCameraId || 'all';

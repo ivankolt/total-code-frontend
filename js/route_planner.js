@@ -150,7 +150,7 @@ async function _geocode(type) {
     _setStatus('Поиск адреса...', 'loading');
     try {
         const url = `${NOMINATIM}?q=${encodeURIComponent(query)}&format=json&limit=1&accept-language=ru`;
-        const res = await window.apiFetch(url);
+        const res = await fetch(url);   // Nominatim - внешний API, credentials не нужны
         const data = await res.json();
 
         if (!data.length) { _setStatus('Адрес не найден', 'error'); return; }
@@ -207,12 +207,12 @@ async function _buildRoute() {
     _setStatus('Запрос маршрута...', 'loading');
 
     try {
-        // Mapbox Directions API — работает из браузера без CORS
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/` +
-            `${fromCoords[0]},${fromCoords[1]};${toCoords[0]},${toCoords[1]}` +
-            `?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
+        // Маршрут через бэкенд-прокси /api/route (OSRM) — нет CORS проблем с Mapbox
+        const fromLng = fromCoords[0], fromLat = fromCoords[1];
+        const toLng   = toCoords[0],   toLat   = toCoords[1];
+        const url = API_BASE + '/api/route?from_lng=' + fromLng + '&from_lat=' + fromLat + '&to_lng=' + toLng + '&to_lat=' + toLat;
 
-        const res = await window.apiFetch(url);
+        const res = await window.apiFetch(url);  // через свой бэкенд — credentials OK
         const data = await res.json();
 
         if (!data.routes || !data.routes.length) {
