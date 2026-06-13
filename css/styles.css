@@ -163,7 +163,7 @@
         margin: 0 auto;
 
         display: grid;
-        grid-template-columns: 200px 200px minmax(0, 1fr) 160px 110px 110px;
+        grid-template-columns: 230px 200px minmax(0, 1fr) 160px 110px 110px;
         grid-template-rows: 1fr auto;
         gap: 10px;
         align-items: stretch;
@@ -267,13 +267,17 @@
         color: #d0d8f0;
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
-        font-size: 14px;
+        font-size: 13px;          /* уменьшен чтобы вместить длинные названия */
         font-family: 'Inter', 'Segoe UI', sans-serif;
         cursor: pointer;
         outline: none;
         transition: border-color 0.2s, background 0.2s;
         -webkit-appearance: none;
         appearance: none;
+        /* Текст не обрезается жёстко — браузер покажет ... */
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     #cameraSelector:focus {

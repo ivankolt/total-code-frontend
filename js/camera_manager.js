@@ -1,4 +1,4 @@
-﻿import { map } from './map.js';
+import { map } from './map.js';
 
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000' : 'https://api.total-code.ru';
 
@@ -30,12 +30,14 @@ export async function initCameraSelector() {
         cameras.forEach(cam => {
             const option = document.createElement('option');
             option.value = cam.id;
-            // Показываем название улицы (если есть) или ID
-            option.textContent = `📹 ${cam.name || cam.id}`;
+            const label = `📹 ${cam.name || cam.id}`;
+            option.textContent = label;
+            option.title = cam.name || cam.id;   // полное название при наведении
             // Сохраняем координаты прямо в элемент как data-атрибут
             option.dataset.center = JSON.stringify(cam.center);
             selector.appendChild(option);
         });
+
 
         // Обработчик выбора
         selector.addEventListener('change', (e) => {
