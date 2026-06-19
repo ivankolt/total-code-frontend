@@ -43,7 +43,7 @@
                 radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(108, 99, 255, 0.05) 0%, transparent 70%);
             z-index: -1;
-            animation: gradientShift 8s ease-in-out infinite;
+            animation: gradientShift 15s ease-in-out infinite;
         }
 
         @media (prefers-color-scheme: light) {
@@ -63,7 +63,7 @@
         @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: translateY(-30px);
+                transform: translateY(-15px);
             }
             to {
                 opacity: 1;
@@ -74,7 +74,7 @@
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(15px);
             }
             to {
                 opacity: 1;
@@ -85,7 +85,7 @@
         @keyframes fadeInScale {
             from {
                 opacity: 0;
-                transform: scale(0.8);
+                transform: scale(0.95);
             }
             to {
                 opacity: 1;
@@ -98,14 +98,14 @@
                 filter: drop-shadow(0 0 20px rgba(108, 99, 255, 0.3));
             }
             50% {
-                filter: drop-shadow(0 0 30px rgba(108, 99, 255, 0.5));
+                filter: drop-shadow(0 0 30px rgba(108, 99, 255, 0.55));
             }
         }
 
         @keyframes cardSlideIn {
             from {
                 opacity: 0;
-                transform: translateY(30px) scale(0.95);
+                transform: translateY(15px) scale(0.98);
             }
             to {
                 opacity: 1;
@@ -126,7 +126,7 @@
         .profile {
             text-align: center;
             margin-bottom: 40px;
-            animation: fadeInDown 0.6s ease-out;
+            animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .logo {
@@ -136,26 +136,26 @@
             border-radius: 20px;
             object-fit: contain;
             filter: drop-shadow(0 0 20px rgba(108, 99, 255, 0.3));
-            transition: transform 0.3s ease, filter 0.3s ease;
-            animation: logoPulse 3s ease-in-out infinite, fadeInScale 0.8s ease-out;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: logoPulse 4s ease-in-out infinite, fadeInScale 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .logo:hover {
-            transform: scale(1.08) rotate(2deg);
-            filter: drop-shadow(0 0 35px rgba(108, 99, 255, 0.6));
+            transform: scale(1.06) rotate(1deg);
+            filter: drop-shadow(0 0 35px rgba(108, 99, 255, 0.65));
         }
 
         .name {
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 8px;
-            animation: fadeInUp 0.6s ease-out 0.2s both;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
         }
 
         .bio {
             font-size: 14px;
             color: #a0a0a0;
-            animation: fadeInUp 0.6s ease-out 0.4s both;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
         }
 
         @media (prefers-color-scheme: light) {
@@ -169,7 +169,7 @@
             color: #6C63FF;
             margin-top: 12px;
             font-weight: 500;
-            animation: fadeInUp 0.6s ease-out 0.5s both;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
         }
 
         @media (prefers-color-scheme: light) {
@@ -195,12 +195,12 @@
             border-radius: 16px;
             text-decoration: none;
             color: #ffffff;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
-            animation: cardSlideIn 0.5s ease-out both;
+            animation: cardSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
         @media (prefers-color-scheme: light) {
@@ -276,7 +276,7 @@
             position: relative;
             z-index: 1;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             background: transparent;
         }
 
