@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TotalC0de - Links</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        @media (prefers-color-scheme: light) {
+            body {
+                background: #f5f5f7;
+                color: #1d1d1f;
+            }
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(108, 99, 255, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .bg-gradient {
+                background: 
+                    radial-gradient(ellipse at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 50% 50%, rgba(108, 99, 255, 0.03) 0%, transparent 70%);
+            }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes logoPulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(108, 99, 255, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 30px rgba(108, 99, 255, 0.5));
+            }
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(108, 99, 255, 0.3));
+            transition: transform 0.3s ease, filter 0.3s ease;
+            animation: logoPulse 3s ease-in-out infinite, fadeInScale 0.8s ease-out;
+        }
+
+        .logo:hover {
+            transform: scale(1.08) rotate(2deg);
+            filter: drop-shadow(0 0 35px rgba(108, 99, 255, 0.6));
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .bio {
+            font-size: 14px;
+            color: #a0a0a0;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .bio {
+                color: #6e6e73;
+            }
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #6C63FF;
+            margin-top: 12px;
+            font-weight: 500;
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .subtitle {
+                color: #5a52d5;
+            }
+        }
+
+        .links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            animation: cardSlideIn 0.5s ease-out both;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .link-card {
+                background: rgba(255, 255, 255, 0.7);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                color: #1d1d1f;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            }
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .link-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            border-color: rgba(108, 99, 255, 0.4);
+            box-shadow: 
+                0 8px 32px rgba(108, 99, 255, 0.2),
+                0 0 0 1px rgba(108, 99, 255, 0.1);
+        }
+
+        @media (prefers-color-scheme: light) {
+            .link-card:hover {
+                box-shadow: 
+                    0 8px 32px rgba(108, 99, 255, 0.15),
+                    0 0 0 1px rgba(108, 99, 255, 0.2);
+            }
+        }
+
+        .link-card:hover::before {
+            opacity: 1;
+        }
+
+        .link-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.12) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .link-card:hover::after {
+            opacity: 1;
+        }
+
+        .link-card:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .link-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            background: transparent;
+        }
+
+        .link-card:hover .link-icon {
+            transform: scale(1.1);
+        }
+
+        .link-icon-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .link-icon.telegram {
+            background: transparent;
+        }
+
+        .link-icon.vk {
+            background: transparent;
+        }
+
+        .link-icon.bot {
+            background: transparent;
+        }
+
+        .link-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .link-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .link-url {
+            font-size: 12px;
+            color: #707070;
+            transition: color 0.3s ease;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .link-url {
+                color: #6e6e73;
+            }
+        }
+
+        .link-card:hover .link-url {
+            color: #a0a0a0;
+        }
+
+        .link-arrow {
+            font-size: 18px;
+            color: #505050;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .link-arrow {
+                color: #86868b;
+            }
+        }
+
+        .link-card:hover .link-arrow {
+            color: #6C63FF;
+            transform: translateX(6px);
+            text-shadow: 0 0 12px rgba(108, 99, 255, 0.5);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding-top: 60px;
+            text-align: center;
+            font-size: 12px;
+            color: #404040;
+        }
+
+        @media (max-width: 520px) {
+            .container {
+                padding: 40px 16px;
+            }
+
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .name {
+                font-size: 20px;
+            }
+
+            .link-card {
+                padding: 16px 20px;
+            }
+
+            .link-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+            }
+
+            .link-icon-img {
+                width: 100%;
+                height: 100%;
+            }
+
+            .link-title {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div id="app">
+        <div class="container">
+            <div class="profile">
+                <img src="assets/logo.jpg" alt="Код Всего" class="logo">
+                <h1 class="name">{{ name }}</h1>
+                <p class="bio">{{ bio }}</p>
+                <p class="subtitle">{{ subtitle }}</p>
+            </div>
+
+            <div class="links">
+                <a
+                    v-for="(link, index) in links"
+                    :key="index"
+                    :href="link.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link-card"
+                    :style="{ animationDelay: (index * 0.1 + 0.5) + 's' }"
+                >
+                    <div class="link-icon" :class="link.iconClass">
+                        <img :src="link.iconImg" :alt="link.title" class="link-icon-img">
+                    </div>
+                    <div class="link-content">
+                        <div class="link-title">{{ link.title }}</div>
+                        <div class="link-url">{{ link.displayUrl }}</div>
+                    </div>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="footer" v-if="footerText">
+                {{ footerText }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    name: 'TotalC0de',
+                    bio: 'Telegram bots • Coding • Automation',
+                    subtitle: 'Все соцсети в одном месте — ждём вас!',
+                    footerText: '',
+                    links: [
+                        {
+                            title: 'TG BOT для генерации',
+                            url: 'https://t.me/total_code_gpt_bot',
+                            displayUrl: 't.me/total_code_gpt_bot',
+                            iconImg: 'assets/free-icon-telegram-2111646.png',
+                            iconClass: 'bot'
+                        },
+                        {
+                            title: 'VK BOT (Сообщение)',
+                            url: 'https://m.vk.com/totalc0de',
+                            displayUrl: 'vk.com/totalc0de',
+                            iconImg: 'assets/free-icon-vk-5968835.png',
+                            iconClass: 'vk'
+                        },
+                        {
+                            title: 'Телеграм Код Всего',
+                            url: 'https://t.me/TotalC0de',
+                            displayUrl: 't.me/TotalC0de',
+                            iconImg: 'assets/free-icon-telegram-2111646.png',
+                            iconClass: 'telegram'
+                        },
+                        {
+                            title: 'Телеграмм лс',
+                            url: 'https://t.me/Privatnumber5',
+                            displayUrl: 't.me/Privatnumber5',
+                            iconImg: 'assets/free-icon-telegram-2111646.png',
+                            iconClass: 'telegram'
+                        }
+                    ]
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
